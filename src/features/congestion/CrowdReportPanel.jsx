@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback, memo, useRef } from 'react';
 import TicketCard from '../../components/TicketCard';
 import { useMutation } from '@tanstack/react-query';
 import { mockZones } from '../../services/mockData';
@@ -54,14 +54,13 @@ const congestionToValue = (level) => {
 };
 
 /* ── Gate node on the radar map ── */
-function GateNode({ zone, idx, total, isSelected, onClick }) {
+const GateNode = memo(function GateNode({ zone, idx, total, isSelected, onClick }) {
   const position = getZonePosition(idx, total);
   const status = getZoneStatus(zone);
   const [hovered, setHovered] = useState(false);
 
   return (
     <motion.button
-      key={zone.id}
       initial={{ opacity: 0, scale: 0.7 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: idx * 0.07, type: 'spring', stiffness: 260, damping: 20 }}
@@ -71,7 +70,6 @@ function GateNode({ zone, idx, total, isSelected, onClick }) {
       className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 focus:outline-none"
       style={{ left: `calc(50% + ${position.x}px)`, top: `calc(50% + ${position.y}px)` }}
     >
-      {/* Pulse ring */}
       {(isSelected || hovered) && (
         <motion.div
           initial={{ opacity: 0, scale: 0.6 }}
@@ -81,8 +79,6 @@ function GateNode({ zone, idx, total, isSelected, onClick }) {
           style={{ background: `radial-gradient(circle, ${status.glow}, transparent 70%)` }}
         />
       )}
-
-      {/* Main circle */}
       <motion.div
         animate={{
           boxShadow: isSelected
@@ -94,12 +90,9 @@ function GateNode({ zone, idx, total, isSelected, onClick }) {
         transition={{ duration: 0.25 }}
         className="relative flex h-12 w-12 flex-col items-center justify-center rounded-full border border-white/10 bg-slate-950/90 backdrop-blur"
       >
-        {/* Status dot */}
-        <div className={`h-2 w-2 rounded-full ${status.dot} shadow-sm`} />
+        <div className={`h-2 w-2 rounded-full ${status.dot}`} />
         <span className={`mt-0.5 text-[8px] font-black tracking-widest ${status.tone}`}>{status.short}</span>
       </motion.div>
-
-      {/* Label below */}
       <div className="flex flex-col items-center">
         <span className="max-w-[72px] text-center text-[8px] font-bold uppercase tracking-wider text-white/80 leading-tight">
           {zone.name.replace(' Gate', '')}
@@ -108,10 +101,10 @@ function GateNode({ zone, idx, total, isSelected, onClick }) {
       </div>
     </motion.button>
   );
-}
+});
 
 /* ── Zone list row ── */
-function ZoneRow({ zone, rank }) {
+const ZoneRow = memo(function ZoneRow({ zone, rank }) {
   const status = getZoneStatus(zone);
   const pct = Math.round(zone.congestion * 100);
 
@@ -154,7 +147,7 @@ function ZoneRow({ zone, rank }) {
       </div>
     </motion.div>
   );
-}
+});
 
 /* ── Main ── */
 export default function CrowdReportPanel() {
@@ -168,10 +161,15 @@ export default function CrowdReportPanel() {
     return mockZones.map((z) => ({ ...z }));
   });
 
+  // Debounced localStorage write — avoids serializing on every keystroke/update
+  const lsTimerRef = useRef(null);
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window === 'undefined') return;
+    clearTimeout(lsTimerRef.current);
+    lsTimerRef.current = setTimeout(() => {
       window.localStorage.setItem('crowd-map-zones', JSON.stringify(zones));
-    }
+    }, 500);
+    return () => clearTimeout(lsTimerRef.current);
   }, [zones]);
 
   const reportMutation = useMutation({

@@ -1,90 +1,74 @@
-import { useState, useEffect } from 'react';
+import { useState, memo, useCallback } from 'react';
 import TicketCard from '../../components/TicketCard';
 import { useMatchStatus } from '../../hooks/useMatchStatus';
 import { useMatchDayStore } from '../../store/useMatchDayStore';
 import { Trophy, Clock, MapPin, XCircle, ThumbsUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// Final match date: July 19, 2026 15:00 ET
-const FINAL_KICKOFF = new Date('2026-07-19T15:00:00-04:00'); // EDT (UTC-4)
+const FINAL_KICKOFF = new Date('2026-07-19T15:00:00-04:00');
 
-// Safe date formatting function
 function formatDateSafely(dateString, options = {}) {
   if (!dateString) return '';
   try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '';
-    return date.toLocaleDateString('en-US', options);
-  } catch (e) {
-    return '';
-  }
+    const d = new Date(dateString);
+    return isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-US', options);
+  } catch { return ''; }
 }
 
 function formatTimeSafely(dateString, options = {}) {
   if (!dateString) return '';
   try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '';
-    return date.toLocaleTimeString('en-US', options);
-  } catch (e) {
-    return '';
-  }
+    const d = new Date(dateString);
+    return isNaN(d.getTime()) ? '' : d.toLocaleTimeString('en-US', options);
+  } catch { return ''; }
 }
+
+// Isolated countdown — only this re-renders every second
+const Countdown = memo(({ isPreMatch }) => {
+  const [cd, setCd] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const tick = () => {
+      const diff = FINAL_KICKOFF - Date.now();
+      if (diff <= 0) { setCd({ days: 0, hours: 0, minutes: 0, seconds: 0 }); return; }
+      setCd({
+        days:    Math.floor(diff / 86_400_000),
+        hours:   Math.floor((diff % 86_400_000) / 3_600_000),
+        minutes: Math.floor((diff % 3_600_000)  / 60_000),
+        seconds: Math.floor((diff % 60_000)      / 1_000),
+      });
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {[['Days', cd.days], ['Hours', cd.hours], ['Minutes', cd.minutes], ['Seconds', cd.seconds]].map(([label, value]) => (
+        <div key={label} className={`rounded-[1.25rem] border border-white/10 p-3 text-center ${isPreMatch ? 'bg-slate-950/80' : 'bg-slate-950/70'}`}>
+          <div className={`font-display text-2xl font-bold sm:text-3xl ${isPreMatch ? 'text-amber-50' : 'text-white'}`}>
+            {String(value).padStart(2, '0')}
+          </div>
+          <div className={`mt-1 text-[10px] font-semibold uppercase tracking-[0.3em] ${isPreMatch ? 'text-amber-200/80' : 'text-slate-400'}`}>
+            {label}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+});
+Countdown.displayName = 'Countdown';
 
 export default function MatchCard() {
   const { data: match, isLoading, isError } = useMatchStatus();
   const { phase } = useMatchDayStore();
-  const [countdown, setCountdown] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
   const [userVote, setUserVote] = useState(null);
-  const [pulseTeam, setPulseTeam] = useState(null);
 
-  // Update countdown
-  useEffect(() => {
-    const updateCountdown = () => {
-      const now = new Date();
-      const diff = FINAL_KICKOFF - now;
-
-      if (diff <= 0) {
-        setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      setCountdown({ days, hours, minutes, seconds });
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (!pulseTeam || typeof window === 'undefined') {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => setPulseTeam(null), 220);
-    return () => window.clearTimeout(timeoutId);
-  }, [pulseTeam]);
-
-  // Handle vote
-  const handleVote = (team) => {
-    if (userVote) {
-      return;
-    }
-
+  const handleVote = useCallback((team) => {
+    if (userVote) return;
     setUserVote(team);
-    setPulseTeam(team);
-  };
+  }, [userVote]);
 
   const matchStatus = (match?.status || '').toString().toUpperCase();
   const isMatchActive = ['IN_PLAY', 'PAUSED', 'HALFTIME', 'BREAK'].includes(matchStatus);
@@ -176,23 +160,7 @@ export default function MatchCard() {
               {match.minute}'
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              { label: 'Days', value: countdown.days },
-              { label: 'Hours', value: countdown.hours },
-              { label: 'Minutes', value: countdown.minutes },
-              { label: 'Seconds', value: countdown.seconds }
-            ].map((item, index) => (
-              <div key={item.label} className={`rounded-[1.25rem] border border-white/10 p-3 text-center ${isPreMatch ? 'bg-slate-950/80' : 'bg-slate-950/70'} ${isPreMatch && index === 0 ? 'sm:scale-[1.03]' : ''}`}>
-                <div className={`font-display text-2xl font-bold text-white sm:text-3xl ${isPreMatch ? 'text-amber-50' : ''}`}>
-                  {String(item.value).padStart(2, '0')}
-                </div>
-                <div className={`mt-1 text-[10px] font-semibold uppercase tracking-[0.3em] ${isPreMatch ? 'text-amber-200/80' : 'text-slate-400'}`}>
-                  {item.label}
-                </div>
-              </div>
-            ))}
-          </div>
+          <Countdown isPreMatch={isPreMatch} />
         </div>
 
         {/* Headline: Pick your favorite to reach the final! */}

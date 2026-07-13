@@ -54,3 +54,18 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #60A5FA, #FFE55C);
 }
+
+/* Promote animated elements to their own compositor layer */
+.group:hover,
+[data-framer-component-type] {
+  will-change: transform;
+}
+
+/* Respect prefers-reduced-motion — disable all transitions/animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

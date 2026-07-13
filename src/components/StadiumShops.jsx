@@ -263,13 +263,9 @@ function VenueCard({ venue, index, className = '', cardHeight = 160, onClick }) 
         <div className="absolute inset-x-0 bottom-0 p-4">
           {/* Icon + name row */}
           <div className="flex items-center gap-2.5">
-            <motion.div
-              animate={{ scale: hovered ? 1.1 : 1 }}
-              transition={{ duration: 0.3 }}
-              className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${venue.accent} text-white shadow-lg`}
-            >
+            <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${venue.accent} text-white shadow-lg transition-transform duration-300 ${hovered ? 'scale-110' : 'scale-100'}`}>
               {venue.icon}
-            </motion.div>
+            </div>
             <h4 className="font-display text-[15px] font-bold leading-tight text-white">
               {venue.name}
             </h4>
@@ -369,9 +365,9 @@ function MenuModal({ venue, onClose }) {
           <div className="mx-6 my-6">
             <h4 className="mb-4 font-display text-xl font-bold text-white">Menu</h4>
             <div className="space-y-3">
-              {venue.menu.map((item, i) => (
+              {venue.menu.map((item) => (
                 <motion.div
-                  key={i}
+                  key={item.name}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}

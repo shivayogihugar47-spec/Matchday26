@@ -1,14 +1,10 @@
 import AccessibilityToggle from './AccessibilityToggle';
-import { useVoiceConcierge } from '../hooks/useVoiceConcierge';
+import { useVoice } from '../context/VoiceContext';
 import { motion } from 'framer-motion';
 import { Mic, MicOff, Activity } from 'lucide-react';
 
 export default function AppHeader() {
-  const {
-    isConnecting,
-    callActive,
-    toggleCall
-  } = useVoiceConcierge();
+  const { isConnecting, callActive, toggleCall } = useVoice();
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur-2xl">
