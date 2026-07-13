@@ -1,8 +1,7 @@
-import LanguageSelector from './LanguageSelector';
 import AccessibilityToggle from './AccessibilityToggle';
 import { useVoiceConcierge } from '../hooks/useVoiceConcierge';
 import { motion } from 'framer-motion';
-import { Trophy, Mic, MicOff, Activity } from 'lucide-react';
+import { Mic, MicOff, Activity } from 'lucide-react';
 
 export default function AppHeader() {
   const {
@@ -26,7 +25,7 @@ export default function AppHeader() {
                 whileTap={{ scale: 0.95 }}
                 className="flex items-center justify-center overflow-hidden"
               >
-                <img src="/logo.png" alt="MatchDay 26 Logo" className="h-14 w-14 object-contain" />
+                <img src="/logo.png" alt="MatchDay 26 Logo" className="h-20 w-20 object-contain" />
               </motion.div>
               <div>
                 <h1 className="font-display text-2xl font-extrabold tracking-tight bg-gradient-to-r from-lime-300 via-yellow-300 to-sky-400 bg-clip-text text-transparent lg:text-3xl">
@@ -43,7 +42,6 @@ export default function AppHeader() {
                 <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-lime-400" />
                 Arena mode
               </div>
-              <LanguageSelector />
               <AccessibilityToggle />
               <motion.button
                 whileHover={{ scale: 1.05 }}
