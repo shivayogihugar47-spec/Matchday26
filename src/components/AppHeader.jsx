@@ -24,9 +24,9 @@ export default function AppHeader() {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-400 via-red-500 to-sky-500 shadow-lg shadow-red-500/30"
+                className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-400 via-red-500 to-sky-500 shadow-lg shadow-red-500/30 overflow-hidden"
               >
-                <Trophy className="h-5 w-5 text-white" />
+                <img src="/logo.png" alt="MatchDay 26 Logo" className="h-8 w-8 object-contain" />
               </motion.div>
               <div>
                 <h1 className="font-display text-2xl font-extrabold tracking-tight bg-gradient-to-r from-lime-300 via-yellow-300 to-sky-400 bg-clip-text text-transparent lg:text-3xl">
