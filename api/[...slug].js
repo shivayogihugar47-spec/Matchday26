@@ -3,15 +3,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
+import knowledgeBase from '../metlife_deep_knowledge_base.json' with { type: 'json' };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
-
-// Fix path to knowledge base, works in both local and Vercel
-const knowledgeBasePath = path.resolve(__dirname, '..', 'metlife_deep_knowledge_base.json');
-const knowledgeBase = JSON.parse(fs.readFileSync(knowledgeBasePath, 'utf8'));
 
 // Helper to map language codes to names
 const getLanguageName = (code) => {
