@@ -4,7 +4,7 @@ import TicketCard from '../../components/TicketCard';
 import { useMatchDayStore } from '../../store/useMatchDayStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useVoiceConcierge } from '../../hooks/useVoiceConcierge';
-import { Bot, Mic, MicOff, User, Send, Activity, MessageSquare } from 'lucide-react';
+import { Bot, Mic, MicOff, User, Send, Activity, MessageSquare, PackageSearch, CheckCircle2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -44,16 +44,24 @@ export default function Concierge() {
     mutationFn: async ({ message }) => {
       let res;
       try {
+        // Build history from current conversation (exclude the initial welcome message)
+        const history = conversation
+          .filter((m) => m.id !== 1) // skip the static welcome message
+          .map((m) => ({
+            role: m.type === 'user' ? 'user' : 'assistant',
+            content: m.message,
+            ...(m.reasoning_details ? { reasoning_details: m.reasoning_details } : {}),
+          }));
+
         res = await fetch('/api/chat', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message,
+            history,
             phase,
             language,
-            accessibility: accessibilityMode
+            accessibility: accessibilityMode,
           }),
         });
       } catch {
@@ -65,9 +73,7 @@ export default function Concierge() {
           const errData = await res.json();
           throw new Error(errData.error || errData.details || 'Failed to get AI response');
         } catch (error) {
-          if (error instanceof Error) {
-            throw new Error(error.message);
-          }
+          if (error instanceof Error) throw new Error(error.message);
           throw new Error('Failed to get AI response');
         }
       }
@@ -91,8 +97,10 @@ export default function Concierge() {
           timestamp: Date.now(),
           source: data.source,
           model: data.model,
-          reasoning_details: data.reasoning_details
-        }
+          reasoning_details: data.reasoning_details ?? null,
+          toolUsed: data.toolUsed ?? null,
+          toolResult: data.toolResult ?? null,
+        },
       ]);
     },
     onError: (error) => {
@@ -165,7 +173,7 @@ export default function Concierge() {
                     'bg-slate-500'
                   }`} />
                   {getStatusText()}
-                  {callError && <span className="ml-1 font-semibold text-rose-400">({callError})</span>}
+                  {callError && <span className="ml-1 font-semibold text-rose-400">({typeof callError === 'object' ? (callError.msg || callError.details || 'Voice error') : callError})</span>}
                   {micPermissionDenied && <span className="ml-1 font-semibold text-amber-400">Mic denied</span>}
                 </p>
               </div>
@@ -222,38 +230,59 @@ export default function Concierge() {
                 >
                   <div className="text-sm leading-relaxed">
                     {msg.type === 'ai' ? (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          ul: ({ ...props }) => (
-                            <ul className="ml-0 mb-2 list-disc list-inside text-slate-200" {...props} />
-                          ),
-                          ol: ({ ...props }) => (
-                            <ol className="ml-0 mb-2 list-decimal list-inside text-slate-200" {...props} />
-                          ),
-                          li: ({ ...props }) => (
-                            <li className="mb-1" {...props} />
-                          ),
-                          p: ({ ...props }) => (
-                            <p className="mb-2 last:mb-0" {...props} />
-                          ),
-                          strong: ({ ...props }) => (
-                            <strong className="font-bold text-white" {...props} />
-                          ),
-                          a: ({ ...props }) => (
-                            <a className="text-cyan-300 underline transition hover:text-cyan-200" target="_blank" rel="noopener noreferrer" {...props} />
-                          ),
-                          code: ({ inline, ...props }) => (
-                            inline ? (
-                              <code className="rounded bg-slate-900/80 px-1.5 py-0.5 font-mono text-xs text-amber-300" {...props} />
-                            ) : (
-                              <pre className="mb-2 overflow-x-auto rounded-lg border border-white/10 bg-slate-900/80 p-2 font-mono text-xs" {...props} />
+                      <>
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            ul: ({ ...props }) => (
+                              <ul className="ml-0 mb-2 list-disc list-inside text-slate-200" {...props} />
+                            ),
+                            ol: ({ ...props }) => (
+                              <ol className="ml-0 mb-2 list-decimal list-inside text-slate-200" {...props} />
+                            ),
+                            li: ({ ...props }) => (
+                              <li className="mb-1" {...props} />
+                            ),
+                            p: ({ ...props }) => (
+                              <p className="mb-2 last:mb-0" {...props} />
+                            ),
+                            strong: ({ ...props }) => (
+                              <strong className="font-bold text-white" {...props} />
+                            ),
+                            a: ({ ...props }) => (
+                              <a className="text-cyan-300 underline transition hover:text-cyan-200" target="_blank" rel="noopener noreferrer" {...props} />
+                            ),
+                            code: ({ inline, ...props }) => (
+                              inline ? (
+                                <code className="rounded bg-slate-900/80 px-1.5 py-0.5 font-mono text-xs text-amber-300" {...props} />
+                              ) : (
+                                <pre className="mb-2 overflow-x-auto rounded-lg border border-white/10 bg-slate-900/80 p-2 font-mono text-xs" {...props} />
+                              )
                             )
-                          )
-                        }}
-                      >
-                        {msg.message}
-                      </ReactMarkdown>
+                          }}
+                        >
+                          {msg.message}
+                        </ReactMarkdown>
+
+                        {/* Lost & Found confirmation card */}
+                        {msg.toolUsed === 'report_lost_item' && msg.toolResult?.reference && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-3 rounded-xl border border-emerald-400/20 bg-emerald-500/10 p-3"
+                          >
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                              <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider">Report Filed</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <PackageSearch className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                              <span className="font-mono text-xs font-bold text-white">{msg.toolResult.reference}</span>
+                            </div>
+                            <p className="mt-1 text-[11px] text-slate-400">Head to the Lost & Found desk near AMEX Gate with this reference.</p>
+                          </motion.div>
+                        )}
+                      </>
                     ) : (
                       <p>{msg.message}</p>
                     )}

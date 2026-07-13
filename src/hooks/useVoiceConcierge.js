@@ -92,7 +92,15 @@ export const useVoiceConcierge = () => {
             // Error handling
             vapiRef.current.on('error', (error) => {
               console.error('[Vapi] Error:', error);
-              setCallError(error.error?.message || error.message || 'Something went wrong');
+              // Safely extract a string from any error shape Vapi sends
+              const msg =
+                error?.error?.msg ||
+                error?.error?.message ||
+                error?.error?.details ||
+                error?.message ||
+                (typeof error?.error === 'string' ? error.error : null) ||
+                'Voice call ended unexpectedly';
+              setCallError(String(msg));
               cleanupVapi();
             });
 
@@ -103,7 +111,13 @@ export const useVoiceConcierge = () => {
 
             vapiRef.current.on('call-start-failed', (failed) => {
               console.error('[Vapi] Call failed:', failed);
-              setCallError(failed.error?.message || 'Call failed');
+              const msg =
+                failed?.error?.msg ||
+                failed?.error?.message ||
+                failed?.error?.details ||
+                failed?.message ||
+                'Call failed to start';
+              setCallError(String(msg));
               cleanupVapi();
             });
           }
