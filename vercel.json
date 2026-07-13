@@ -6,9 +6,16 @@
       "dest": "/api/[...slug].js"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|webmanifest|woff|woff2|ttf|eot))",
+      "dest": "/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.html",
-      "status": 200
+      "dest": "/index.html"
     }
   ]
 }
