@@ -1,4 +1,4 @@
-import { useState, memo, useCallback } from 'react';
+import { useState, useEffect, memo, useCallback } from 'react';
 import TicketCard from '../../components/TicketCard';
 import { useMatchStatus } from '../../hooks/useMatchStatus';
 import { useMatchDayStore } from '../../store/useMatchDayStore';
