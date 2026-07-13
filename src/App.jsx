@@ -93,13 +93,13 @@ function App() {
               </div>
 
               <div className="flex w-full flex-col gap-6">
-                <FadeIn delay={0}><MatchCard /></FadeIn>
-                <FadeIn delay={0.08}><WeatherCard /></FadeIn>
+                <FadeIn delay={0}><div id="match"><MatchCard /></div></FadeIn>
+                <FadeIn delay={0.08}><div id="weather"><WeatherCard /></div></FadeIn>
               </div>
             </section>
 
             {/* Concierge */}
-            <section className="mb-10">
+            <section id="concierge" className="mb-10">
               <div className="mb-6 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-sky-500 shadow-lg shadow-sky-500/30">
                   <Bot className="h-5 w-5 text-yellow-950" />
@@ -124,7 +124,7 @@ function App() {
             </section>
 
             {/* Crowd Map */}
-            <section className="mb-10">
+            <section id="crowd" className="mb-10">
               <FadeIn delay={0.25}>
                 <Suspense fallback={<SectionFallback label="crowd map" />}>
                   <CrowdReportPanel />
@@ -133,7 +133,7 @@ function App() {
             </section>
 
             {/* Stadium Shops */}
-            <section className="mb-10">
+            <section id="shops" className="mb-10">
               <FadeIn delay={0.3}>
                 <Suspense fallback={<SectionFallback label="shops" />}>
                   <StadiumShops />
