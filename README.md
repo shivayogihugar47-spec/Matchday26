@@ -1,4 +1,4 @@
-# MatchDay 26
+# MatchDay 26 ✨
 
 MatchDay 26 is a polished FIFA World Cup stadium experience app for MetLife Stadium. The experience combines a live match/status dashboard, concierge interactions, crowd reporting, wayfinding, and quick-action cards into a single fan-facing shell.
 
