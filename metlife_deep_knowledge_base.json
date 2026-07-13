@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "description": "MatchDay AI knowledge base — MetLife Stadium (New York New Jersey Stadium), FIFA World Cup 2026. Compiled from public sources as of July 11, 2026. Every field has a 'confidence' tag: 'verified' = cross-confirmed by multiple reputable/official sources, 'estimated' = plausible, sourced from at least one source, but not independently cross-confirmed and should NOT be shown with a Live/Verified badge in the app.",
+    "lastUpdated": "2026-07-11",
+    "criticalPitchNote": "Wikipedia's current MetLife Stadium article states that during this exact World Cup, spectators were still stuck at the stadium three hours after the first match there concluded, with NJ Transit struggling to move them despite lower-than-expected rail demand. This is real, dated evidence that the exact problem this app addresses has already occurred at this exact venue, this tournament. Use this as the opening evidence in your pitch's problem statement."
+  },
+
+  "venue": {
+    "realName": "MetLife Stadium",
+    "tournamentName": "New York New Jersey Stadium",
+    "address": "1 MetLife Stadium Drive, East Rutherford, NJ 07073",
+    "location": "Meadowlands Sports Complex, 8 miles / 10 km west of Midtown Manhattan",
+    "coordinates": { "lat": 40.8135, "lon": -74.0745 },
+    "nearestAirport": "Newark Liberty International Airport, ~10 miles north via NJ Turnpike",
+    "confidence": "verified"
+  },
+
+  "capacity": {
+    "nflConfigured": 82500,
+    "fifaSoccerConfigured": "approximately 82,000 (adjusted from NFL config for FIFA pitch dimensions and safety run-off zones)",
+    "note": "82,500 is the widely-cited, official NFL seating figure. The ~82,000 FIFA-specific figure reflects pitch/run-off adjustments per event-guide sources.",
+    "confidence": "verified"
+  },
+
+  "seatingStructure": {
+    "note": "Breakdown below is from a fan seating-guide source, not an official stadium press release — treat numbers as reference/estimated, not verified-exact.",
+    "confidence": "estimated",
+    "levels": [
+      { "tier": "Lower Bowl / Field Level", "sections": "101–149", "approxSeats": 33346, "description": "Closest to the pitch, rows ~1–40, most coveted and expensive" },
+      { "tier": "Club Level", "sections": "201–250b", "approxClubSeats": 10055, "description": "Indoor climate-controlled concourses, upscale food, private bars, wider cushioned seats — requires Club ticket/pass" },
+      { "tier": "Upper Level", "sections": "301–350", "approxSeats": 27897, "description": "Highest, most affordable, steep rake engineered for good sightlines despite height" }
+    ],
+    "suites": { "count": 218, "description": "Luxury suites across four levels", "confidence": "estimated" }
+  },
+
+  "gates": {
+    "note": "These are the REAL, sponsor-named entrances confirmed via MetLife Stadium's own official A-Z Guide and Accessibility pages — this supersedes any earlier lettered A/B/C/D placeholder structure used in draft versions of this knowledge base.",
+    "confidence": "verified",
+    "list": [
+      { "id": "amex", "name": "AMEX Gate" },
+      { "id": "hcltech", "name": "HCLTech Gate" },
+      { "id": "verizon", "name": "Verizon Gate" },
+      { "id": "metlife", "name": "MetLife Gate" },
+      { "id": "moodys", "name": "Moody's Gate" }
+    ],
+    "elevatorsAt": ["HCLTech Gate", "Verizon Gate", "Moody's Gate", "east premium entrance", "west premium entrance"],
+    "escalatorsAt": ["AMEX Gate", "HCLTech Gate", "Verizon Gate", "MetLife Gate", "Moody's Gate"]
+  },
+
+  "amenities": {
+    "restrooms": { "count": 175, "confidence": "estimated", "sourceNote": "From a third-party fan/stats site, not an official stadium press release — present as Reference Data, not Live/Verified." },
+    "concessionPoints": { "count": "400+", "confidence": "estimated" },
+    "teamStores": { "count": 4, "confidence": "estimated" },
+    "paymentPolicy": "Cashless — card or mobile wallet only for all food, drink, and merchandise. Reverse ATMs on-site convert cash to a prepaid Visa card at no charge.",
+    "concourseArea": "Approximately 2.1 million square feet, engineered to remain navigable at full capacity",
+    "videoBoards": "Four HD video boards, each 30 x 118 feet",
+    "confidence_general": "estimated except where noted"
+  },
+
+  "accessibility": {
+    "seating": "Wheelchair, low-mobility, and companion seating available on all levels; ADA-compliant seats exceed federal requirements per stadium materials (1,500+ ADA seats cited by a fan-stats source — treat that specific count as Reference Data)",
+    "elevators": "Available at HCLTech, Verizon, and Moody's Gates, plus both east/west premium seating entrances",
+    "assistiveListening": "ListenWIFI app-based system; hearing loop locations at ticket windows, flagship store, select concessions, and Guest Services",
+    "guestServicesBooths": [
+      "100 Concourse near Sections 124 and 149",
+      "200 Concourse near Sections 227 and 249",
+      "300 Concourse near Sections 303, 324, 328, and 349"
+    ],
+    "accessibleParking": "Lots E, F, and G, valid credentials required",
+    "adaDropOff": "Lot C, near Verizon Gate",
+    "wheelchairTransportToSeat": "Available on request from any Accessibility Assistant staff member at the gates",
+    "sensoryProgram": "Sensory-friendly program in partnership with KultureCity",
+    "confidence": "verified"
+  },
+
+  "fifaWorldCupSpecificRules": {
+    "bagPolicy": "Approved bags must be clear plastic, vinyl, or PVC, max 12 x 6 x 12 inches (30 x 15 x 30 cm). Small clutches/wallets up to 4.5 x 6.5 inches (11 x 16.5 cm) allowed. Non-transparent backpacks and large bags prohibited. This FIFA policy overrides the stadium's normal (non-tournament) bag policy.",
+    "umbrellas": "Prohibited under FIFA match rules — recommend a light rain shell instead, since MetLife is open-air with no roof",
+    "waterBottles": "Empty, transparent, reusable plastic bottles up to 1 liter permitted; refill locations posted on event day",
+    "alcohol": "Cutoff times not published for the tournament specifically",
+    "confidence": "verified"
+  },
+
+  "transportation": {
+    "rail": {
+      "system": "NJ Transit — Meadowlands Rail Line",
+      "route": "Special event train service direct from Secaucus Junction to Meadowlands Station, adjacent to the stadium",
+      "note": "Real, documented congestion risk: per current reporting, spectators experienced multi-hour waits after the first World Cup match at this stadium despite lower-than-expected rail demand — this is the core real-world validation for this app's problem statement.",
+      "confidence": "verified"
+    },
+    "bus": {
+      "options": [
+        "NJ Transit Bus Route 703",
+        "Coach USA 351 Meadowlands Express, from Port Authority Bus Terminal (Manhattan)"
+      ],
+      "confidence": "verified"
+    },
+    "driving": {
+      "parkingSpaces": "26,000+ across the Meadowlands Sports Complex",
+      "parkingRatesRange": "Approximately $40–$100, varies by lot and event; must generally be purchased in advance online, not at the gate",
+      "lotOpenTime": "Typically 5 hours before kickoff for major events",
+      "closestLots": "Green and Gold lots are closest to the gates and fill fastest; Platinum lot (off Paterson Plank Road) offers a less congested exit option",
+      "confidence": "estimated"
+    },
+    "rideshare": "Designated Uber/Lyft lot on-site; expect surge pricing and long waits after major events per multiple guides",
+    "confidence_general": "verified for rail/bus, estimated for parking specifics"
+  },
+
+  "ticketing": {
+    "importantCaveat": "FIFA uses DYNAMIC PRICING for the 2026 tournament — there is no single fixed ticket price. Prices shift continuously based on demand, sales phase, and category. Do not present any single number as 'the' price; present ranges with an explicit as-of date.",
+    "officialChannel": "FIFA.com/tickets is the only official primary sales channel. No over-the-counter ticket sales at the stadium itself.",
+    "asOfDate": "2026-07-11",
+    "generalPublicEntryFrom": "$120 (general public matches, lower end)",
+    "supporterEntryTier": {
+      "price": 60,
+      "note": "Fixed-price tier (USD 60) introduced by FIFA for fans of qualified teams, available across all 104 matches including the Final — a deliberate affordability measure introduced after backlash over high dynamic pricing."
+    },
+    "finalMatchPricing": {
+      "asOfJune2026": {
+        "category4_cheapest": 2030,
+        "category1_base": 6730,
+        "category1_dynamicPeak": 10990,
+        "frontCategory1_premiumTier": 32970
+      },
+      "serviceFee": "15% FIFA service fee added at checkout, on top of face value",
+      "note": "The Final at MetLife Stadium is reported as the most expensive World Cup Final in ticketing history, roughly 4x the top Category 1 price of the 2022 Qatar Final (~$1,600).",
+      "confidence": "verified as of source date, but price is inherently a moving target — re-verify close to your demo date if you state a specific number out loud"
+    },
+    "resaleMarketplace": "FIFA Resale/Exchange Marketplace via FIFA.com/tickets is the only FIFA-authorized resale channel for the US/Canada; a separate face-value-only Exchange Marketplace exists for Mexico residents",
+    "confidence": "verified"
+  },
+
+  "finalMatch": {
+    "date": "2026-07-19",
+    "kickoffET": "15:00",
+    "venue": "MetLife Stadium (New York New Jersey Stadium)",
+    "teams": {
+      "status": "TBD",
+      "note": "Not yet determined as of this data compile date — depends on Quarterfinal (July 9-11) and Semifinal (July 14-15) results. DO NOT hardcode placeholder team names.",
+      "howToPopulateDynamically": "Use the football-data.org API integration (competition code WC) already wired into the app's match-status service. Once the Semifinals conclude (July 15), poll for the Final fixture (competition=WC, stage=FINAL) and populate team names from the real API response. Until then, display 'Finalists to be determined' rather than a guess."
+    },
+    "confidence": "verified for date/venue/time, intentionally TBD for teams"
+  }
+}
