@@ -36,7 +36,8 @@ const allowedOrigins = new Set([
     'http://127.0.0.1:5174'
 ].filter(Boolean));
 
-const isAllowedOrigin = (origin) => !origin || allowedOrigins.has(origin) || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
+// Allow Vercel deployments and localhost
+const isAllowedOrigin = (origin) => !origin || allowedOrigins.has(origin) || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin) || /vercel\.app$/.test(origin);
 
 const sanitizeText = (value, maxLength = 400) => {
     if (typeof value !== 'string') {
@@ -107,6 +108,39 @@ const mockMatch = {
     venue: 'MetLife Stadium',
     source: 'simulated'
 };
+
+// Internal functions (instead of internal HTTP calls)
+async function getWeatherData(lat, lon) {
+    const latitude = lat || 40.8135;
+    const longitude = lon || -74.0745;
+    try {
+        const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation_probability,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York`;
+        const response = await fetch(openMeteoUrl);
+        if (!response.ok) throw new Error('Failed to fetch weather from Open-Meteo');
+        const weatherData = await response.json();
+        const current = weatherData.current;
+        const tempF = Math.round(current.temperature_2m);
+        const tempC = Math.round((tempF - 32) * 5 / 9);
+        return {
+            tempF,
+            tempC,
+            wind: current.wind_speed_10m || 0,
+            humidity: current.relative_humidity_2m,
+            rain: current.precipitation_probability,
+            source: 'Open-Meteo',
+            updatedAt: new Date().toISOString()
+        };
+    } catch (e) {
+        console.error("Weather fetch error, using mock", e);
+        return mockWeather;
+    }
+}
+
+async function getMatchData() {
+    const liveFixture = await fetchFootballDataFinalFixture();
+    const fallback = buildKnowledgeBaseFallback();
+    return liveFixture || fallback;
+}
 
 const translations = {
     en: { welcome: 'Welcome', lost: 'Lost?' },
@@ -251,43 +285,12 @@ app.get('/api/health', (req, res) => {
 
 app.get('/api/weather', async (req, res) => {
     const { lat, lon } = req.query;
-    // Fallback to stadium coordinates if no location provided
-    const latitude = lat || 40.8135;
-    const longitude = lon || -74.0745;
-
-    try {
-        const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation_probability,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York`;
-        const response = await fetch(openMeteoUrl);
-        if (!response.ok) throw new Error('Failed to fetch weather from Open-Meteo');
-
-        const weatherData = await response.json();
-        const current = weatherData.current;
-        const tempF = Math.round(current.temperature_2m);
-        const tempC = Math.round((tempF - 32) * 5 / 9);
-
-        res.json({
-            data: {
-                tempF,
-                tempC,
-                wind: current.wind_speed_10m || 0,
-                humidity: current.relative_humidity_2m,
-                rain: current.precipitation_probability,
-                source: 'Open-Meteo',
-                updatedAt: new Date().toISOString()
-            },
-            meta: { timestamp: Date.now() }
-        });
-    } catch (error) {
-        console.error('Weather API error:', error);
-        // Fallback to mock data
-        res.json({ data: mockWeather, meta: { timestamp: Date.now() } });
-    }
+    const data = await getWeatherData(lat, lon);
+    res.json({ data, meta: { timestamp: Date.now() } });
 });
 
 app.get('/api/match', async (req, res) => {
-    const liveFixture = await fetchFootballDataFinalFixture();
-    const fallback = buildKnowledgeBaseFallback();
-    const matchData = liveFixture || fallback;
+    const matchData = await getMatchData();
     const responseMeta = {
         timestamp: Date.now(),
         source: matchData.source,
@@ -320,7 +323,7 @@ app.post('/api/chat', async (req, res) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${openRouterKey}`,
-                    'HTTP-Referer': 'http://localhost:5174',
+                    'HTTP-Referer': process.env.CORS_ORIGIN || 'http://localhost:5174',
                     'X-Title': 'FIFA World Cup Concierge'
                 },
                 body: JSON.stringify({
@@ -471,52 +474,39 @@ app.get('/api/exit-plan', (req, res) => {
 });
 
 // NEW: Concierge endpoints
-app.get('/api/concierge/live-status', async (req, res) => {
-    const { zone } = req.query;
-    const gateName = zone || "Verizon Gate";
-    
+// Internal function for live status
+async function getLiveStatus(gateName) {
     // Get zone congestion or default
     const zoneStats = zoneCongestionMap[gateName] || zoneCongestionMap["Verizon Gate"];
     const congestionLevel = zoneStats.congestion < 0.4 ? "low" : zoneStats.congestion < 0.7 ? "medium" : "high";
     
-    // Get weather (cached/fast)
-    let weather = mockWeather;
-    try {
-        const weatherRes = await fetch(`http://localhost:${PORT}/api/weather`);
-        if (weatherRes.ok) {
-            const weatherJson = await weatherRes.json();
-            weather = weatherJson.data;
-        }
-    } catch (e) { console.log("Using mock weather for live-status"); }
-    
-    // Get match status (cached/fast)
-    let match = mockMatch;
-    try {
-        const matchRes = await fetch(`http://localhost:${PORT}/api/match`);
-        if (matchRes.ok) {
-            const matchJson = await matchRes.json();
-            match = matchJson.data;
-        }
-    } catch (e) { console.log("Using mock match for live-status"); }
+    // Get weather and match via internal functions
+    const weather = await getWeatherData();
+    const match = await getMatchData();
     
     // Build match status string
     const matchStatus = `${match.status}; kickoff at ${new Date(match.kickoff).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
     const currentPhase = match.status === 'Pre-Match' ? 'before kickoff' : match.status === 'HALFTIME' ? 'halftime' : 'during match';
-    const weatherSummary = `${weather.rain > 30 ? 'light rain' : 'clear'}, ${Math.round(weather.temperature)} degrees`;
-    
-    res.json({
-        data: {
-            zone: gateName,
-            zoneCongestion: congestionLevel,
-            recentReports: mockRecentReports.join("; "),
-            currentPhase,
-            currentWeather: weatherSummary,
-            matchStatus,
-            weather,
-            zoneStats,
-            match
-        }
-    });
+    const weatherSummary = `${weather.rain > 30 ? 'light rain' : 'clear'}, ${Math.round(weather.tempF)} degrees`;
+
+    return {
+        zone: gateName,
+        zoneCongestion: congestionLevel,
+        recentReports: mockRecentReports.join("; "),
+        currentPhase,
+        currentWeather: weatherSummary,
+        matchStatus,
+        weather,
+        zoneStats,
+        match
+    };
+}
+
+app.get('/api/concierge/live-status', async (req, res) => {
+    const { zone } = req.query;
+    const gateName = zone || "Verizon Gate";
+    const liveStatus = await getLiveStatus(gateName);
+    res.json({ data: liveStatus });
 });
 
 app.get('/api/concierge/system-prompt', async (req, res) => {
@@ -528,24 +518,8 @@ app.get('/api/concierge/system-prompt', async (req, res) => {
         ? "Always respond in the EXACT SAME LANGUAGE as the user's latest message, without any mention of language switching." 
         : `Always respond in ${lang} exclusively.`;
     
-    // Get live status
-    let liveStatus;
-    try {
-        const statusRes = await fetch(`http://localhost:${PORT}/api/concierge/live-status?zone=${encodeURIComponent(gateName)}`);
-        if (statusRes.ok) {
-            const statusJson = await statusRes.json();
-            liveStatus = statusJson.data;
-        }
-    } catch (e) {
-        // Fallback values
-        liveStatus = {
-            currentPhase: 'before kickoff',
-            currentWeather: 'clear, 72 degrees',
-            zoneCongestion: 'low',
-            recentReports: 'AMEX Gate moving faster',
-            matchStatus: 'Gates open; kickoff at 8 PM'
-        };
-    }
+    // Get live status directly
+    const liveStatus = await getLiveStatus(gateName);
     
     // Build system prompt
     const systemPrompt = `You are MatchDay AI, a helpful concierge for the FIFA World Cup match at MetLife Stadium (New York New Jersey Stadium) in East Rutherford, NJ.

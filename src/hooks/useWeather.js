@@ -31,7 +31,7 @@ export const useWeather = () => {
     queryKey: ['weather', userLocation?.lat, userLocation?.lon],
     queryFn: async () => {
       if (!userLocation) return null;
-      const res = await fetch(`http://localhost:3001/api/weather?lat=${userLocation.lat}&lon=${userLocation.lon}`);
+      const res = await fetch(`/api/weather?lat=${userLocation.lat}&lon=${userLocation.lon}`);
       if (!res.ok) throw new Error('Failed to fetch weather');
       const data = await res.json();
       return data.data;
