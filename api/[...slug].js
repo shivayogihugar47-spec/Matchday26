@@ -715,8 +715,10 @@ app.get('/api/exit-plan/latest', (req, res) => {
     res.json({ data: lastExitPlan });
 });
 
-// Export for Vercel
-export default app;
+// Vercel serverless function handler
+export default async function handler(req, res) {
+  return app(req, res);
+}
 
 // Start server for local dev
 if (process.env.NODE_ENV !== 'production') {
