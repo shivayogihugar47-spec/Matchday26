@@ -75,7 +75,7 @@ const GateNode = memo(function GateNode({ zone, idx, total, isSelected, onClick 
       )}
       {/* Circle */}
       <div
-        className="relative flex h-12 w-12 flex-col items-center justify-center rounded-full border border-white/10 bg-slate-950/90 backdrop-blur transition-shadow duration-200"
+        className="relative flex h-12 w-12 flex-col items-center justify-center rounded-full border border-white/10 bg-slate-950/90 transition-shadow duration-200"
         style={{
           boxShadow: isSelected
             ? `0 0 0 2px ${status.ring}, 0 0 16px 4px ${status.glow}`
@@ -236,12 +236,12 @@ export default function CrowdReportPanel() {
             <div className="absolute inset-y-[12%] left-1/2 w-px bg-white/[0.04]" />
 
             {/* Center hub */}
-            <div className="relative z-10 flex h-12 w-12 flex-col items-center justify-center rounded-full border border-white/10 bg-slate-950/90 backdrop-blur-sm shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+            <div className="relative z-10 flex h-12 w-12 flex-col items-center justify-center rounded-full border border-white/10 bg-slate-900 shadow-[0_0_20px_rgba(59,130,246,0.15)]">
               <Activity className="h-4 w-4 text-sky-400" />
             </div>
 
             {/* Label top */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full border border-white/8 bg-slate-950/80 px-3 py-1 text-[9px] font-black uppercase tracking-[0.35em] text-slate-400 backdrop-blur-sm">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 rounded-full border border-white/8 bg-slate-900 px-3 py-1 text-[9px] font-black uppercase tracking-[0.35em] text-slate-400">
               Crowd Pulse
             </div>
 

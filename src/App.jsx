@@ -19,9 +19,9 @@ const DeveloperPanel  = lazy(() => import('./components/DeveloperPanel'));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30_000,       // don't re-fetch within 30s
+      staleTime: 30_000,
       retry: 1,
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: false, // critical — prevents re-renders when mobile user switches apps
     },
   },
 });
@@ -54,9 +54,6 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <VoiceProvider>
         <div className="min-h-screen overflow-x-hidden app-shell">
-          {/* Static background gradient — no re-render cost */}
-          <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,215,0,0.1),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.09),_transparent_36%)]" aria-hidden="true" />
-
           <AppHeader />
 
           <main className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">

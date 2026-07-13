@@ -6,62 +6,55 @@
   --color-bg: #050509;
   --color-bg-secondary: #0f172a;
   --color-card: rgba(255, 255, 255, 0.04);
-  --color-card-hover: rgba(255, 255, 255, 0.07);
   --color-gold: #FFD700;
-  --color-gold-light: #FFE55C;
-  --color-gold-dark: #C4A000;
   --color-accent: #3B82F6;
-  --radius-card: 1.75rem;
-  --radius-button: 1rem;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: linear-gradient(135deg, #050509 0%, #0f172a 50%, #050509 100%);
+  /* Single flat gradient — no radial-gradient, no repaint on scroll */
+  background: #02030a;
   font-family: 'Inter', 'Poppins', sans-serif;
   color: #F8FAFC;
   overflow-x: hidden;
+  /* Prevent layout shifts on mobile when address bar hides */
+  -webkit-overflow-scrolling: touch;
 }
 
-#root {
-  min-height: 100vh;
+html { scroll-behavior: smooth; }
+#root { min-height: 100vh; }
+
+/* ── Custom scrollbar (desktop only) ── */
+@media (hover: hover) {
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(15,23,42,0.7); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #3B82F6, #FFD700);
+    border-radius: 999px;
+    border: 2px solid rgba(15,23,42,0.9);
+  }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* ── Section fade-in (CSS only, no JS) ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-section {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease forwards;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.7);
-  border-radius: 999px;
+/* ── will-change only during active interaction, not permanently ── */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #3B82F6, #FFD700);
-  border-radius: 999px;
-  border: 2px solid rgba(15, 23, 42, 0.9);
-  transition: all 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #60A5FA, #FFE55C);
-}
-
-/* Promote animated elements to their own compositor layer */
-.group:hover,
-[data-framer-component-type] {
-  will-change: transform;
-}
-
-/* Respect prefers-reduced-motion — disable all transitions/animations */
+.hover-lift:hover { transform: translateY(-2px); }
+.hover-lift:active { transform: scale(0.98); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

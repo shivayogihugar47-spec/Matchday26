@@ -25,7 +25,7 @@ export default function AppHeader() {
   return (
     <header className="sticky top-0 z-50">
       {/* ── Main bar ── */}
-      <div className="border-b border-white/[0.07] bg-slate-950/85 backdrop-blur-2xl">
+      <div className="border-b border-white/[0.07] bg-slate-950/95 md:bg-slate-950/85 md:backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4 sm:h-[4.5rem]">
 
@@ -101,9 +101,9 @@ export default function AppHeader() {
         </div>
       </div>
 
-      {/* ── Mobile drawer — CSS transition, no framer-motion ── */}
+      {/* ── Mobile drawer ── */}
       <div
-        className={`overflow-hidden border-b border-white/[0.07] bg-slate-950/95 backdrop-blur-2xl transition-all duration-250 ease-out lg:hidden ${
+        className={`overflow-hidden border-b border-white/[0.07] bg-slate-950 transition-all duration-200 lg:hidden ${
           menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
