@@ -715,9 +715,14 @@ app.get('/api/exit-plan/latest', (req, res) => {
     res.json({ data: lastExitPlan });
 });
 
-// Start server
-app.listen(PORT, () => {
+// Export for Vercel
+export default app;
+
+// Start server for local dev
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
     console.log(`Backend server running on http://localhost:${PORT}`);
     console.log('Ready to handle Vapi tool calls!');
     console.log('Exit plan endpoint: /api/exit-plan/latest');
-});
+  });
+}
