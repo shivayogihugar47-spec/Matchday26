@@ -63,7 +63,9 @@ const GateNode = memo(function GateNode({ zone, idx, total, isSelected, onClick 
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 focus:outline-none"
+      aria-pressed={isSelected}
+      aria-label={`${zone.name}: ${status.label}, ${zone.waitTime} minute wait. Click to report congestion.`}
+      className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 focus:ring-offset-slate-950 rounded-full"
       style={{ left: `calc(50% + ${position.x}px)`, top: `calc(50% + ${position.y}px)` }}
     >
       {/* Pulse ring */}
@@ -114,7 +116,7 @@ const ZoneRow = memo(function ZoneRow({ zone, rank }) {
           <span className="truncate text-sm font-semibold text-white">{zone.name}</span>
           <span className="ml-auto flex-shrink-0">{getTrendIcon(zone.trend)}</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-white/8">
+        <div className="h-1.5 overflow-hidden rounded-full bg-white/8" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${zone.name} congestion: ${pct}%`}>
           <div
             className={`h-full rounded-full bg-gradient-to-r ${status.bar} transition-all duration-500`}
             style={{ width: `${pct}%` }}
@@ -340,17 +342,18 @@ export default function CrowdReportPanel() {
               </div>
               <button
                 onClick={() => setReportingZone(null)}
-                className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 transition hover:text-white"
+                aria-label="Close crowd report form"
+                className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
             </div>
 
             <div className="space-y-4">
               {/* How busy */}
               <div>
-                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">How busy?</label>
-                <div className="grid grid-cols-4 gap-2">
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400" id="how-busy-label">How busy?</label>
+                <div className="grid grid-cols-4 gap-2" role="group" aria-labelledby="how-busy-label">
                   {[
                     { value: 'light', label: 'Light', color: 'emerald' },
                     { value: 'medium', label: 'Medium', color: 'amber' },
@@ -360,9 +363,10 @@ export default function CrowdReportPanel() {
                     <button
                       key={value}
                       onClick={() => setCongestionLevel(value)}
-                      className={`rounded-2xl border py-2.5 text-xs font-bold transition-all ${
+                      aria-pressed={congestionLevel === value}
+                      className={`rounded-2xl border py-2.5 text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 ${
                         congestionLevel === value
-                          ? `border-${color}-400/40 bg-${color}-500/20 text-${color}-300 shadow-[0_0_12px_rgba(0,0,0,0.2)]`
+                          ? `border-${color}-400/40 bg-${color}-500/20 text-${color}-300`
                           : 'border-white/8 bg-white/4 text-slate-400 hover:bg-white/8'
                       }`}
                     >
@@ -375,15 +379,20 @@ export default function CrowdReportPanel() {
               {/* Wait time */}
               <div>
                 <div className="mb-2 flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Wait time</label>
-                  <span className="font-mono text-lg font-black text-white">{waitTime}<span className="text-xs text-slate-400 ml-1">min</span></span>
+                  <label htmlFor="wait-time-slider" className="text-xs font-bold uppercase tracking-widest text-slate-400">Wait time</label>
+                  <span className="font-mono text-lg font-black text-white" aria-live="polite">{waitTime}<span className="text-xs text-slate-400 ml-1">min</span></span>
                 </div>
                 <input
+                  id="wait-time-slider"
                   type="range"
                   min="1"
                   max="30"
                   value={waitTime}
                   onChange={(e) => setWaitTime(e.target.value)}
+                  aria-label={`Wait time: ${waitTime} minutes`}
+                  aria-valuemin={1}
+                  aria-valuemax={30}
+                  aria-valuenow={parseInt(waitTime)}
                   className="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-amber-400"
                 />
                 <div className="mt-1.5 flex justify-between text-[9px] font-semibold text-slate-600 uppercase tracking-widest">

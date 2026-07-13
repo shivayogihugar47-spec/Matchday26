@@ -164,49 +164,56 @@ export default function Concierge() {
   return (
     <TicketCard className="overflow-hidden">
       {/* ── Header row ── */}
-      <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-slate-900/50 px-4 py-3">
-        {/* Bot avatar + status */}
+      <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-slate-900/50 px-4 py-3" role="region" aria-label="Voice concierge status">
         <div className="flex min-w-0 items-center gap-3">
           <div className="relative flex-shrink-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-sky-500">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-sky-500" aria-hidden="true">
               <Bot className="h-5 w-5 text-white" />
             </div>
-            <span className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-900 ${
-              isConnecting ? 'bg-yellow-400 animate-pulse' : callActive ? 'bg-emerald-400' : 'bg-slate-500'
-            }`} />
+            <span
+              className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-slate-900 ${
+                isConnecting ? 'bg-yellow-400 animate-pulse' : callActive ? 'bg-emerald-400' : 'bg-slate-500'
+              }`}
+              aria-hidden="true"
+            />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-bold text-white">MatchDay Concierge</p>
-            <p className="truncate text-[11px] text-slate-400">
+            <p className="text-sm font-bold text-white" id="concierge-title">MatchDay Concierge</p>
+            <p className="truncate text-[11px] text-slate-400" aria-live="polite" aria-atomic="true">
               {statusText}
-              {callError && <span className="ml-1 text-rose-400">· {typeof callError === 'object' ? (callError.msg || 'Error') : callError}</span>}
-              {micPermissionDenied && <span className="ml-1 text-amber-400">· Mic denied</span>}
+              {callError && <span className="ml-1 text-rose-400" role="alert">· {typeof callError === 'object' ? (callError.msg || 'Error') : callError}</span>}
+              {micPermissionDenied && <span className="ml-1 text-amber-400" role="alert">· Microphone access denied</span>}
             </p>
           </div>
         </div>
 
-        {/* Voice button */}
         <button
           onClick={toggleCall}
           disabled={isConnecting || !VAPI_READY}
-          className={`flex flex-shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+          aria-pressed={callActive}
+          aria-label={callActive ? 'End voice call' : 'Start voice call with concierge'}
+          className={`flex flex-shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-white transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-50 ${
             isConnecting ? 'animate-pulse bg-gradient-to-r from-amber-400 to-orange-500' :
-            callActive    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-[0_0_16px_rgba(16,185,129,0.35)]' :
+            callActive    ? 'bg-gradient-to-r from-emerald-500 to-teal-500' :
                             'bg-gradient-to-r from-amber-400 to-sky-500'
           }`}
         >
           {isConnecting
-            ? <Activity className="h-4 w-4 animate-spin" />
+            ? <Activity className="h-4 w-4 animate-spin" aria-hidden="true" />
             : callActive
-            ? <><MicOff className="h-4 w-4" /><span className="hidden sm:inline">End</span></>
-            : <><Mic className="h-4 w-4" /><span className="hidden sm:inline">Voice</span></>}
+            ? <><MicOff className="h-4 w-4" aria-hidden="true" /><span className="hidden sm:inline">End</span></>
+            : <><Mic className="h-4 w-4" aria-hidden="true" /><span className="hidden sm:inline">Voice</span></>}
         </button>
       </div>
 
-      {/* ── Active call waveform bar ── */}
       {callActive && (
-        <div className="mb-4 flex items-center justify-center gap-3 rounded-xl border border-emerald-400/20 bg-emerald-500/8 px-4 py-2.5">
-          <div className="flex h-5 items-end gap-1">
+        <div
+          className="mb-4 flex items-center justify-center gap-3 rounded-xl border border-emerald-400/20 bg-emerald-500/8 px-4 py-2.5"
+          role="status"
+          aria-live="polite"
+          aria-label={assistantSpeaking ? 'Assistant is speaking' : userSpeaking ? 'Listening to you' : 'Voice call active, say something'}
+        >
+          <div className="flex h-5 items-end gap-1" aria-hidden="true">
             {[
               { c: 'bg-amber-400',   h: assistantSpeaking ? 20 : userSpeaking ? 14 : 8 },
               { c: 'bg-sky-400',     h: assistantSpeaking ? 24 : userSpeaking ? 18 : 12 },
@@ -222,43 +229,56 @@ export default function Concierge() {
       )}
 
       {/* ── Message list ── */}
-      <div className="mb-3 flex h-64 flex-col gap-3 overflow-y-auto overscroll-contain rounded-2xl border border-white/8 bg-slate-950/40 p-3 sm:h-72">
+      <div
+        role="log"
+        aria-label="Conversation history"
+        aria-live="polite"
+        aria-relevant="additions"
+        className="mb-3 flex h-64 flex-col gap-3 overflow-y-auto overscroll-contain rounded-2xl border border-white/8 bg-slate-950/40 p-3 sm:h-72"
+      >
         {conversation.map((msg) => (
           <ChatMessage key={msg.id} msg={msg} />
         ))}
 
         {chatMutation.isPending && (
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-sky-500">
+          <div className="flex items-center gap-2" role="status" aria-label="Concierge is thinking">
+            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-sky-500" aria-hidden="true">
               <Bot className="h-3.5 w-3.5 text-white" />
             </div>
             <div className="flex items-center gap-1.5 rounded-2xl rounded-tl-sm bg-slate-800/80 px-3 py-2 ring-1 ring-white/8">
-              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400" />
-              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-sky-400" style={{ animationDelay: '0.2s' }} />
-              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" style={{ animationDelay: '0.4s' }} />
+              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400" aria-hidden="true" />
+              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-sky-400" style={{ animationDelay: '0.2s' }} aria-hidden="true" />
+              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" style={{ animationDelay: '0.4s' }} aria-hidden="true" />
               <span className="ml-1 text-xs text-slate-400">Thinking…</span>
             </div>
           </div>
         )}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} aria-hidden="true" />
       </div>
 
       {/* ── Input row ── */}
-      <form onSubmit={handleSend} className="flex gap-2">
+      <form onSubmit={handleSend} className="flex gap-2" role="search" aria-label="Chat with concierge">
+        <label htmlFor="concierge-input" className="sr-only">
+          Ask the MatchDay 26 concierge a question
+        </label>
         <input
+          id="concierge-input"
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={chatMutation.isPending}
+          autoComplete="off"
+          aria-describedby="concierge-title"
           className="min-w-0 flex-1 rounded-xl border border-white/10 bg-slate-900/70 px-4 py-2.5 text-sm text-white placeholder-slate-500 transition focus:border-sky-500/50 focus:outline-none focus:ring-2 focus:ring-sky-500/20 disabled:opacity-50"
           placeholder="Ask anything about the match or stadium…"
         />
         <button
           type="submit"
           disabled={!input.trim() || chatMutation.isPending}
-          className="flex flex-shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-sky-500 px-4 py-2.5 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-40"
+          aria-label="Send message"
+          className="flex flex-shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-sky-500 px-4 py-2.5 text-sm font-bold text-white transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-40"
         >
-          <Send className="h-4 w-4" />
+          <Send className="h-4 w-4" aria-hidden="true" />
           <span className="hidden sm:inline">Send</span>
         </button>
       </form>

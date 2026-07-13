@@ -56,7 +56,7 @@ function App() {
         <div className="min-h-screen overflow-x-hidden app-shell">
           <AppHeader />
 
-          <main className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+          <main id="main-content" role="main" className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
 
             {/* Hero banner */}
             <section className="mb-10">
@@ -90,13 +90,13 @@ function App() {
             </section>
 
             {/* Concierge */}
-            <section id="concierge" className="mb-10">
+            <section id="concierge" className="mb-10" aria-labelledby="concierge-heading">
               <div className="mb-6 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-sky-500 shadow-lg shadow-sky-500/30">
                   <Bot className="h-5 w-5 text-yellow-950" />
                 </div>
                 <div>
-                  <h3 className="font-display text-2xl font-bold bg-gradient-to-r from-amber-300 via-sky-400 to-cyan-300 bg-clip-text text-transparent">
+                  <h3 id="concierge-heading" className="font-display text-2xl font-bold bg-gradient-to-r from-amber-300 via-sky-400 to-cyan-300 bg-clip-text text-transparent">
                     Talk to Our MatchDay Agent
                   </h3>
                   <p className="mt-1 text-sm text-slate-400">Get instant help, info about the game, stadium, and everything in between.</p>
@@ -115,7 +115,7 @@ function App() {
             </section>
 
             {/* Crowd Map */}
-            <section id="crowd" className="mb-10">
+            <section id="crowd" className="mb-10" aria-label="Crowd congestion map">
               <FadeIn delay={0.25}>
                 <Suspense fallback={<SectionFallback label="crowd map" />}>
                   <CrowdReportPanel />
@@ -124,7 +124,7 @@ function App() {
             </section>
 
             {/* Stadium Shops */}
-            <section id="shops" className="mb-10">
+            <section id="shops" className="mb-10" aria-label="Stadium eats and shops">
               <FadeIn delay={0.3}>
                 <Suspense fallback={<SectionFallback label="shops" />}>
                   <StadiumShops />
