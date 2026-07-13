@@ -122,7 +122,21 @@ export const useMatchStatus = () => {
   return useQuery({
     queryKey: ['match'],
     queryFn: async () => {
-      // Use our real semifinal mock data by default since API only has group stage right now
+      try {
+        // Try to get the latest/featured match from worldcup26.ir API
+        const response = await fetch(`${WORLD_CUP_26_API_BASE}/today`);
+        if (!response.ok) throw new Error('Failed to fetch from worldcup26.ir');
+        const data = await response.json();
+        
+        // If there are matches, use the first one
+        if (data.games && data.games.length > 0) {
+          return convertWorldCup26MatchToAppFormat(data.games[0]);
+        }
+      } catch (e) {
+        console.warn('Using mock match data:', e);
+      }
+      
+      // Fallback to mock data if anything fails
       return mockMatch;
     },
     refetchInterval: 30000 // Refresh every 30 seconds (for live updates)
