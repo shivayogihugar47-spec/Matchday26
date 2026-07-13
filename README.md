@@ -6,7 +6,7 @@
 
 **Real-time crowd intelligence · Voice concierge · Smart exit planning · Lost & found automation**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://Matchday2k26.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://matchday2k6.vercel.app/)
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github)](https://github.com/shivayogihugar47-spec/Matchday26)
 [![Tests](https://img.shields.io/badge/Tests-110%20passing-brightgreen?style=for-the-badge&logo=vitest)](./src/test)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](./LICENSE)
