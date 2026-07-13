@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import { motion } from 'framer-motion';
 import TicketCard from './TicketCard';
 import { useMatchDayStore } from '../store/useMatchDayStore';
 import {
@@ -51,20 +50,16 @@ function styleClasses(style, color) {
 
 // Memoized individual bento tile
 const BentoTile = memo(({ item }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 16 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.35, delay: item.delay }}
-    whileHover={{ scale: 1.03, y: -4 }}
-    className={`cursor-pointer overflow-hidden group ${SIZE_CLASSES[item.size] ?? SIZE_CLASSES.small} ${styleClasses(item.style, item.color)}`}
+  <div
+    className={`cursor-pointer overflow-hidden group relative transition-transform duration-200 hover:scale-[1.03] hover:-translate-y-1 active:scale-[0.98] ${SIZE_CLASSES[item.size] ?? SIZE_CLASSES.small} ${styleClasses(item.style, item.color)}`}
   >
-    <div className="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors" />
+    <div className="absolute inset-0 bg-white/5 transition-colors duration-150 group-hover:bg-white/10" />
     <div className="relative z-10">
-      <div className="text-white mb-4">{item.icon}</div>
-      <h4 className="font-display text-xl font-bold text-white mb-1 drop-shadow-md">{item.title}</h4>
-      <p className="text-white/85 text-sm leading-relaxed">{item.description}</p>
+      <div className="mb-4 text-white">{item.icon}</div>
+      <h4 className="mb-1 font-display text-xl font-bold text-white drop-shadow-md">{item.title}</h4>
+      <p className="text-sm leading-relaxed text-white/85">{item.description}</p>
     </div>
-  </motion.div>
+  </div>
 ));
 BentoTile.displayName = 'BentoTile';
   
@@ -80,12 +75,9 @@ export default function QuickActions() {
       <div className="relative z-10">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="flex items-center gap-4">
-            <motion.div
-              whileHover={{ rotate: 10, scale: 1.1 }}
-              className="flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-yellow-400 via-orange-500 to-pink-500 shadow-2xl shadow-yellow-500/40"
-            >
+            <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-gradient-to-br from-yellow-400 via-orange-500 to-pink-500 shadow-2xl shadow-yellow-500/40 transition-transform duration-200 hover:scale-110">
               <Zap className="h-8 w-8 text-white" />
-            </motion.div>
+            </div>
             <div>
               <h3 className="font-display text-2xl font-bold bg-gradient-to-r from-yellow-200 via-orange-300 to-pink-400 bg-clip-text text-transparent sm:text-3xl">
                 MatchDay Moments

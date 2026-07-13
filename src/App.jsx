@@ -6,7 +6,6 @@ import WeatherCard from './features/weather/WeatherCard';
 import MatchCard from './features/match/MatchCard';
 import QuickActions from './components/QuickActions';
 import './App.css';
-import { motion } from 'framer-motion';
 import { Bot } from 'lucide-react';
 
 // Lazy-loaded heavy sections
@@ -42,16 +41,11 @@ const SectionFallback = memo(({ label }) => (
 ));
 SectionFallback.displayName = 'SectionFallback';
 
-// Fade-in wrapper — single reusable animated div
+// CSS fade-in — no framer-motion, smooth via animation class in App.css
 const FadeIn = memo(({ delay = 0, children }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 16 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.45, delay }}
-    className="w-full"
-  >
+  <div className="fade-in-section w-full" style={{ animationDelay: `${delay}s` }}>
     {children}
-  </motion.div>
+  </div>
 ));
 FadeIn.displayName = 'FadeIn';
 

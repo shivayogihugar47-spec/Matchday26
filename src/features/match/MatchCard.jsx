@@ -3,7 +3,6 @@ import TicketCard from '../../components/TicketCard';
 import { useMatchStatus } from '../../hooks/useMatchStatus';
 import { useMatchDayStore } from '../../store/useMatchDayStore';
 import { Trophy, Clock, MapPin, XCircle, ThumbsUp } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const FINAL_KICKOFF = new Date('2026-07-19T15:00:00-04:00');
 
@@ -174,16 +173,12 @@ export default function MatchCard() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-          <motion.div whileHover={{ scale: 1.01 }} className={`rounded-[1.8rem] border p-4 text-center shadow-[0_12px_40px_rgba(251,191,36,0.12)] ${isPreMatch ? 'border-amber-400/20 bg-[linear-gradient(135deg,rgba(251,191,36,0.18),rgba(2,6,23,0.84))] sm:scale-[1.01]' : 'border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,0.94),rgba(2,6,23,0.82))] opacity-90'}`}>
-            <motion.div
-              animate={{ y: [0, -3, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full border border-amber-400/25 bg-gradient-to-br from-amber-300/20 to-orange-500/10 shadow-[0_8px_24px_rgba(251,191,36,0.14)]"
-            >
+          <div className={`rounded-[1.8rem] border p-4 text-center transition-transform duration-200 hover:scale-[1.01] ${isPreMatch ? 'border-amber-400/20 bg-[linear-gradient(135deg,rgba(251,191,36,0.18),rgba(2,6,23,0.84))]' : 'border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,0.94),rgba(2,6,23,0.82))] opacity-90'}`}>
+            <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full border border-amber-400/25 bg-gradient-to-br from-amber-300/20 to-orange-500/10">
               <span className="font-display text-3xl font-bold text-amber-100">
                 {homeTeamDisplay.split(' ').map(word => word[0]).join('').slice(0, 2)}
               </span>
-            </motion.div>
+            </div>
             <div className="mb-3 flex items-center justify-center gap-2">
               <span className="rounded-full border border-white/10 bg-slate-950/45 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-amber-100/90">
                 Match sheet
@@ -213,36 +208,21 @@ export default function MatchCard() {
                 </p>
               </div>
             )}
-          </motion.div>
+          </div>
 
-          <motion.div whileHover={{ scale: 1.01 }} className={`rounded-[2.2rem] border px-5 py-4 shadow-[0_16px_45px_rgba(2,6,23,0.3)] ${isLiveMatch ? 'border-amber-400/20 bg-[linear-gradient(135deg,rgba(251,191,36,0.16),rgba(15,23,42,0.95))] sm:scale-[1.02]' : 'border-white/10 bg-[linear-gradient(135deg,rgba(2,6,23,0.96),rgba(15,23,42,0.9))] opacity-90'}`}>
+          <div className={`rounded-[2.2rem] border px-5 py-4 transition-transform duration-200 hover:scale-[1.01] ${isLiveMatch ? 'border-amber-400/20 bg-[linear-gradient(135deg,rgba(251,191,36,0.16),rgba(15,23,42,0.95))]' : 'border-white/10 bg-[linear-gradient(135deg,rgba(2,6,23,0.96),rgba(15,23,42,0.9))] opacity-90'}`}>
             <div className="flex flex-col items-center gap-3">
               <div className={`rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.35em] ${isLiveMatch ? 'text-amber-100' : 'text-slate-300'}`}>
                 {hasLiveScore ? 'Live score' : 'Scheduled kickoff'}
               </div>
               {hasLiveScore ? (
                 <div className="flex items-center justify-center gap-4">
-                  <motion.span
-                    key={match.score.home}
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="font-mono text-5xl font-bold text-amber-200 drop-shadow-[0_0_12px_rgba(251,191,36,0.16)]"
-                  >
-                    {match.score.home}
-                  </motion.span>
+                  <span className="font-mono text-5xl font-bold text-amber-200">{match.score.home}</span>
                   <div className="flex flex-col gap-1.5">
                     <div className="h-1.5 w-1.5 rounded-full bg-slate-500" />
                     <div className="h-1.5 w-1.5 rounded-full bg-slate-500" />
                   </div>
-                  <motion.span
-                    key={match.score.away}
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="font-mono text-5xl font-bold text-sky-200 drop-shadow-[0_0_12px_rgba(56,189,248,0.16)]"
-                  >
-                    {match.score.away}
-                  </motion.span>
+                  <span className="font-mono text-5xl font-bold text-sky-200">{match.score.away}</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-2 text-center">
@@ -261,18 +241,14 @@ export default function MatchCard() {
                 {hasLiveScore ? 'Broadcast overlay' : 'Kickoff window'}
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div whileHover={{ scale: 1.01 }} className={`rounded-[1.8rem] border p-4 text-center shadow-[0_12px_40px_rgba(56,189,248,0.12)] ${isPreMatch ? 'border-sky-400/20 bg-[linear-gradient(135deg,rgba(56,189,248,0.12),rgba(2,6,23,0.84))] opacity-90' : 'border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,0.9),rgba(2,6,23,0.82))] opacity-85'}`}>
-            <motion.div
-              animate={{ y: [0, -3, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.25 }}
-              className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full border border-sky-400/25 bg-gradient-to-br from-sky-300/20 to-blue-500/10 shadow-[0_8px_24px_rgba(56,189,248,0.14)]"
-            >
+          <div className={`rounded-[1.8rem] border p-4 text-center transition-transform duration-200 hover:scale-[1.01] ${isPreMatch ? 'border-sky-400/20 bg-[linear-gradient(135deg,rgba(56,189,248,0.12),rgba(2,6,23,0.84))] opacity-90' : 'border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,0.9),rgba(2,6,23,0.82))] opacity-85'}`}>
+            <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full border border-sky-400/25 bg-gradient-to-br from-sky-300/20 to-blue-500/10">
               <span className="font-display text-3xl font-bold text-sky-100">
                 {awayTeamDisplay.split(' ').map(word => word[0]).join('').slice(0, 2)}
               </span>
-            </motion.div>
+            </div>
             <div className="mb-3 flex items-center justify-center gap-2">
               <span className="rounded-full border border-white/10 bg-slate-950/45 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-sky-100/90">
                 Match sheet
@@ -302,7 +278,7 @@ export default function MatchCard() {
                 </p>
               </div>
             )}
-          </motion.div>
+          </div>
         </div>
 
         {match.events && match.events.length > 0 && (
@@ -316,14 +292,9 @@ export default function MatchCard() {
 
             <div className="space-y-3">
               {match.events.map((event, index) => (
-                <motion.div
+                <div
                   key={event.id}
-                  initial={{ opacity: 0, x: event.team === 'home' ? -20 : 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  className={`flex items-start gap-3 rounded-[1.3rem] border border-white/10 bg-slate-950/70 p-3 ${
-                    event.team === 'home' ? 'border-l-4 border-l-amber-500' : 'border-r-4 border-r-sky-500'
-                  }`}
+                  className={`flex items-start gap-3 rounded-[1.3rem] border border-white/10 bg-slate-950/70 p-3 ${event.team === 'home' ? 'border-l-4 border-l-amber-500' : 'border-r-4 border-r-sky-500'}`}
                 >
                   <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[1.1rem] bg-gradient-to-br from-slate-700 to-slate-800 text-white">
                     {event.type === 'goal' ? (
@@ -351,7 +322,7 @@ export default function MatchCard() {
                         : `Substitution: ${event.on} on for ${event.off}`}
                     </p>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>

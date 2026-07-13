@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState, useCallback, memo, useRef } from 'react';
 import TicketCard from '../../components/TicketCard';
 import { useMutation } from '@tanstack/react-query';
 import { mockZones } from '../../services/mockData';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Users, Radio, TrendingUp, TrendingDown, Minus, X } from 'lucide-react';
 
 /* ── helpers ── */
@@ -60,46 +59,42 @@ const GateNode = memo(function GateNode({ zone, idx, total, isSelected, onClick 
   const [hovered, setHovered] = useState(false);
 
   return (
-    <motion.button
-      initial={{ opacity: 0, scale: 0.7 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: idx * 0.07, type: 'spring', stiffness: 260, damping: 20 }}
+    <button
       onClick={onClick}
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 focus:outline-none"
       style={{ left: `calc(50% + ${position.x}px)`, top: `calc(50% + ${position.y}px)` }}
     >
+      {/* Pulse ring */}
       {(isSelected || hovered) && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.6 }}
-          animate={{ opacity: [0.6, 0], scale: [0.9, 1.9] }}
-          transition={{ duration: 1.2, repeat: Infinity }}
-          className="absolute h-14 w-14 rounded-full"
+        <span
+          className="absolute h-14 w-14 animate-ping rounded-full opacity-50"
           style={{ background: `radial-gradient(circle, ${status.glow}, transparent 70%)` }}
         />
       )}
-      <motion.div
-        animate={{
+      {/* Circle */}
+      <div
+        className="relative flex h-12 w-12 flex-col items-center justify-center rounded-full border border-white/10 bg-slate-950/90 backdrop-blur transition-shadow duration-200"
+        style={{
           boxShadow: isSelected
-            ? `0 0 0 2px ${status.ring}, 0 0 20px 4px ${status.glow}`
+            ? `0 0 0 2px ${status.ring}, 0 0 16px 4px ${status.glow}`
             : hovered
-            ? `0 0 0 1.5px ${status.ring}80, 0 0 12px 2px ${status.glow}`
-            : `0 4px 16px rgba(2,6,23,0.5)`,
+            ? `0 0 0 1.5px ${status.ring}80`
+            : `0 4px 12px rgba(2,6,23,0.5)`,
         }}
-        transition={{ duration: 0.25 }}
-        className="relative flex h-12 w-12 flex-col items-center justify-center rounded-full border border-white/10 bg-slate-950/90 backdrop-blur"
       >
         <div className={`h-2 w-2 rounded-full ${status.dot}`} />
         <span className={`mt-0.5 text-[8px] font-black tracking-widest ${status.tone}`}>{status.short}</span>
-      </motion.div>
+      </div>
+      {/* Label */}
       <div className="flex flex-col items-center">
         <span className="max-w-[72px] text-center text-[8px] font-bold uppercase tracking-wider text-white/80 leading-tight">
           {zone.name.replace(' Gate', '')}
         </span>
         <span className="text-[8px] text-slate-500">{zone.waitTime}m</span>
       </div>
-    </motion.button>
+    </button>
   );
 });
 
@@ -109,43 +104,30 @@ const ZoneRow = memo(function ZoneRow({ zone, rank }) {
   const pct = Math.round(zone.congestion * 100);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 12 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: rank * 0.05, duration: 0.3 }}
-      className="group flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 transition-all hover:bg-white/[0.06] hover:border-white/12"
-    >
-      {/* Rank */}
+    <div className="group flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 transition-colors duration-150 hover:bg-white/[0.06]">
       <span className="w-4 flex-shrink-0 text-[11px] font-black text-slate-600">
         {String(rank + 1).padStart(2, '0')}
       </span>
-
-      {/* Status dot + name */}
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
           <div className={`h-2 w-2 flex-shrink-0 rounded-full ${status.dot}`} />
           <span className="truncate text-sm font-semibold text-white">{zone.name}</span>
           <span className="ml-auto flex-shrink-0">{getTrendIcon(zone.trend)}</span>
         </div>
-        {/* Progress bar */}
         <div className="h-1.5 overflow-hidden rounded-full bg-white/8">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ delay: rank * 0.05 + 0.2, duration: 0.6, ease: 'easeOut' }}
-            className={`h-full rounded-full bg-gradient-to-r ${status.bar}`}
+          <div
+            className={`h-full rounded-full bg-gradient-to-r ${status.bar} transition-all duration-500`}
+            style={{ width: `${pct}%` }}
           />
         </div>
       </div>
-
-      {/* Right stats */}
       <div className="flex flex-shrink-0 flex-col items-end gap-0.5">
         <span className={`rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${status.chip}`}>
           {status.label}
         </span>
         <span className="text-[10px] text-slate-500">{zone.waitTime} min</span>
       </div>
-    </motion.div>
+    </div>
   );
 });
 
@@ -329,11 +311,9 @@ export default function CrowdReportPanel() {
 
               {/* Congestion bar */}
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/8">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.round(busiestZone.congestion * 100)}%` }}
-                  transition={{ duration: 0.8, ease: 'easeOut' }}
-                  className={`h-full rounded-full bg-gradient-to-r ${busiestStatus.bar}`}
+                <div
+                  className={`h-full rounded-full bg-gradient-to-r ${busiestStatus.bar} transition-all duration-700`}
+                  style={{ width: `${Math.round(busiestZone.congestion * 100)}%` }}
                 />
               </div>
             </div>
@@ -349,15 +329,8 @@ export default function CrowdReportPanel() {
       </div>
 
       {/* ── Report form ── */}
-      <AnimatePresence>
-        {reportingZone && (
-          <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.98 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-gradient-to-br from-white/6 via-white/3 to-transparent p-5"
-          >
+      {reportingZone && (
+        <div className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-gradient-to-br from-white/6 via-white/3 to-transparent p-5">
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
                 <h4 className="font-display text-base font-bold text-white">
@@ -421,28 +394,23 @@ export default function CrowdReportPanel() {
 
               {/* Actions */}
               <div className="flex gap-3 pt-1">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
+                <button
                   onClick={() => setReportingZone(null)}
-                  className="flex-1 rounded-2xl border border-white/10 bg-white/8 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-white/12"
+                  className="flex-1 rounded-2xl border border-white/10 bg-white/8 py-2.5 text-sm font-bold text-slate-300 transition-colors hover:bg-white/12 active:scale-95"
                 >
                   Cancel
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
+                </button>
+                <button
                   onClick={handleSubmitReport}
                   disabled={reportMutation.isPending}
-                  className="flex-2 flex-grow rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 py-2.5 text-sm font-bold text-slate-950 shadow-[0_8px_24px_rgba(251,191,36,0.22)] transition hover:shadow-[0_10px_30px_rgba(251,191,36,0.3)] disabled:opacity-60"
+                  className="flex-grow rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 py-2.5 text-sm font-bold text-slate-950 transition-opacity hover:opacity-90 disabled:opacity-60 active:scale-95"
                 >
                   {reportMutation.isPending ? 'Sending…' : 'Submit Report'}
-                </motion.button>
+                </button>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </TicketCard>
   );
 }
