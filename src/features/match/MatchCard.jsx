@@ -291,7 +291,7 @@ export default function MatchCard() {
             </div>
 
             <div className="space-y-3">
-              {match.events.map((event, index) => (
+              {match.events.map((event) => (
                 <div
                   key={event.id}
                   className={`flex items-start gap-3 rounded-[1.3rem] border border-white/10 bg-slate-950/70 p-3 ${event.team === 'home' ? 'border-l-4 border-l-amber-500' : 'border-r-4 border-r-sky-500'}`}

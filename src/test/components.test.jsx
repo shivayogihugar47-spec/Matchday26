@@ -7,9 +7,8 @@
  * Uses React Testing Library following the "test behaviour, not implementation"
  * principle — queries mirror what a screen reader or user would see.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 

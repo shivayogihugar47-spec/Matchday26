@@ -2,7 +2,7 @@
  * Tests for api/_lib/helpers.js
  * Covers: KB summary, system prompt builder, lost-found handler, tools definition
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // Mock fs so tests don't need the real file on disk
 vi.mock('fs', async (importOriginal) => {

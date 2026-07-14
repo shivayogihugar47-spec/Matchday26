@@ -11,7 +11,7 @@ vi.mock('../../api/_lib/helpers.js', () => ({
   setCors:            vi.fn(),
   getKb:             vi.fn(() => ({ venue: { realName: 'MetLife Stadium' } })),
   buildSystemPrompt: vi.fn(() => 'You are MatchDay Concierge.'),
-  handleLostFoundReport: vi.fn(({ description }) => ({
+  handleLostFoundReport: vi.fn(() => ({
     reference: 'LF-TEST123',
     message: 'Report filed. Reference: LF-TEST123. Check Lost & Found desk near AMEX Gate.',
     reportedAt: '2026-07-19T15:00:00.000Z',

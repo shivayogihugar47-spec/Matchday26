@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback, memo, useRef } from 'react';
+import { useEffect, useMemo, useState, memo, useRef } from 'react';
 import TicketCard from '../../components/TicketCard';
 import { useMutation } from '@tanstack/react-query';
 import { mockZones } from '../../services/mockData';
