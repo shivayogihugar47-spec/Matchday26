@@ -7,6 +7,12 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.js'],
+    // Auto-inject React for JSX transforms in all test files
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],

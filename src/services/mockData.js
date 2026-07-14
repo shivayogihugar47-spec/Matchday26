@@ -1,3 +1,13 @@
+// @ts-check
+/**
+ * @fileoverview Mock / seed data for MatchDay 26.
+ *
+ * Used as fallback values when live API integrations are unavailable,
+ * and as fixture data in the test suite.
+ *
+ * All values reflect realistic MetLife Stadium / FIFA World Cup 2026 data.
+ */
+
 // Mock data for MatchDay AI
 
 export const mockWeather = {

@@ -35,7 +35,7 @@ vi.mock('fs', async (importOriginal) => {
 });
 
 // Must import AFTER mocking fs
-const { buildKbSummary, buildSystemPrompt, handleLostFoundReport, TOOLS } =
+const { buildKbSummary, buildSystemPrompt, handleLostFoundReport, TOOLS, setCors } =
   await import('../../api/_lib/helpers.js');
 
 describe('buildKbSummary()', () => {
@@ -154,5 +154,78 @@ describe('TOOLS definition', () => {
 
   it('tool type is function', () => {
     TOOLS.forEach((t) => expect(t.type).toBe('function'));
+  });
+});
+
+// ── Edge cases ───────────────────────────────────────────────────────────────
+
+describe('buildSystemPrompt() — edge cases', () => {
+  it('handles empty zone string gracefully', () => {
+    const prompt = buildSystemPrompt({ zone: '', accessibility: false, language: 'English' });
+    expect(prompt).toContain('not specified a gate');
+  });
+
+  it('handles "null" string as zone gracefully', () => {
+    const prompt = buildSystemPrompt({ zone: 'null', accessibility: false, language: 'English' });
+    expect(prompt).toContain('not specified a gate');
+  });
+
+  it('handles "undefined" string as zone gracefully', () => {
+    const prompt = buildSystemPrompt({ zone: 'undefined', accessibility: false, language: 'English' });
+    expect(prompt).toContain('not specified a gate');
+  });
+
+  it('always includes safety behavior rule', () => {
+    const prompt = buildSystemPrompt({ zone: '', accessibility: false, language: 'English' });
+    expect(prompt).toContain('safety');
+  });
+
+  it('always includes medical emergency instruction', () => {
+    const prompt = buildSystemPrompt({ zone: '', accessibility: false, language: 'English' });
+    expect(prompt).toContain('medical');
+  });
+});
+
+describe('handleLostFoundReport() — edge cases', () => {
+  it('handles missing optional fields gracefully', () => {
+    const result = handleLostFoundReport({ description: 'red umbrella' });
+    expect(result.reference).toMatch(/^LF-/);
+    expect(result.message).toBeTruthy();
+  });
+
+  it('returns valid ISO 8601 reportedAt', () => {
+    const result = handleLostFoundReport({ description: 'laptop' });
+    const parsed = new Date(result.reportedAt);
+    expect(isNaN(parsed.getTime())).toBe(false);
+  });
+
+  it('message always contains stadium desk info', () => {
+    const result = handleLostFoundReport({ description: 'glasses' });
+    expect(result.message).toContain('AMEX Gate');
+    expect(result.message).toContain('Reference:');
+  });
+});
+
+describe('setCors()', () => {
+  it('sets Access-Control-Allow-Origin to *', () => {
+    const headers = {};
+    const mockRes = { setHeader: (k, v) => { headers[k] = v; } };
+    setCors(mockRes);
+    expect(headers['Access-Control-Allow-Origin']).toBe('*');
+  });
+
+  it('sets Access-Control-Allow-Methods', () => {
+    const headers = {};
+    const mockRes = { setHeader: (k, v) => { headers[k] = v; } };
+    setCors(mockRes);
+    expect(headers['Access-Control-Allow-Methods']).toContain('POST');
+    expect(headers['Access-Control-Allow-Methods']).toContain('GET');
+  });
+
+  it('sets Content-Type in allowed headers', () => {
+    const headers = {};
+    const mockRes = { setHeader: (k, v) => { headers[k] = v; } };
+    setCors(mockRes);
+    expect(headers['Access-Control-Allow-Headers']).toContain('Content-Type');
   });
 });
