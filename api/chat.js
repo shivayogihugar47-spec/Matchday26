@@ -1,5 +1,57 @@
+// @ts-check
+/**
+ * @fileoverview POST /api/chat — AI-powered multi-turn concierge chat.
+ *
+ * Architecture:
+ *  1. Builds a system prompt grounded in the MetLife Stadium knowledge base
+ *  2. Sends message + full conversation history to OpenRouter (tencent/hy3:free)
+ *     with reasoning enabled — the model shows its chain-of-thought
+ *  3. If the model returns a tool_call (e.g. report_lost_item), the server
+ *     executes it directly via handleLostFoundReport — no HTTP round-trip
+ *  4. A second OpenRouter call receives the tool result and produces the
+ *     final fan-facing response
+ *  5. reasoning_details are returned to the client for preservation in
+ *     conversation history, enabling multi-turn reasoning continuity
+ *
+ * Security:
+ *  - API key is never exposed to the client
+ *  - Tool execution is server-side only
+ *  - Input is validated before calling the AI
+ *
+ * @module api/chat
+ */
+
 import { buildSystemPrompt, handleLostFoundReport, TOOLS, setCors } from './_lib/helpers.js';
 
+/**
+ * @typedef {Object} ChatMessage
+ * @property {'user'|'assistant'|'system'} role     - Message role.
+ * @property {string}                      content  - Message text content.
+ * @property {Array<*>}                    [reasoning_details] - Preserved reasoning chain.
+ */
+
+/**
+ * @typedef {Object} ChatRequest
+ * @property {string}        message        - Fan's current message (required).
+ * @property {ChatMessage[]} [history=[]]   - Prior conversation turns.
+ * @property {string}        [phase='LIVE'] - Match phase context.
+ * @property {string}        [language='en']- Fan's UI language code.
+ * @property {boolean}       [accessibility=false] - Accessibility mode.
+ */
+
+/**
+ * @typedef {Object} ChatResponse
+ * @property {boolean}       success          - Whether the request succeeded.
+ * @property {{ message: string, reasoning_details: Array<*>|null, toolUsed?: string, toolResult?: object, source: string, model: string }} data
+ */
+
+/**
+ * Chat handler — the primary AI endpoint for MatchDay 26.
+ *
+ * @param {import('@vercel/node').VercelRequest}  req - POST body: ChatRequest
+ * @param {import('@vercel/node').VercelResponse} res - Response: ChatResponse
+ * @returns {Promise<void>}
+ */
 export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -13,6 +65,7 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.OPENROUTER_API_KEY;
 
+  // Graceful fallback when API key is not configured
   if (!apiKey || apiKey === 'your_openrouter_api_key_here') {
     return res.json({
       success: true,
@@ -31,7 +84,7 @@ export default async function handler(req, res) {
       language: language === 'en' ? 'English' : language,
     });
 
-    // Build full message history — preserve reasoning_details for multi-turn continuity
+    // Reconstruct full message history, preserving reasoning_details for continuity
     const messages = [
       { role: 'system', content: `${systemPrompt}\n\nMatch phase: ${phase}.` },
       ...history.map((turn) => {
@@ -52,7 +105,7 @@ export default async function handler(req, res) {
       'X-Title': 'MatchDay AI - FIFA World Cup 2026',
     };
 
-    // ── First call — model may return tool_calls ──────────────────────────
+    // ── First OpenRouter call — may return tool_calls ─────────────────────
     const firstResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: OR_HEADERS,
@@ -73,25 +126,28 @@ export default async function handler(req, res) {
     const firstData = await firstResponse.json();
     const assistantMsg = firstData.choices?.[0]?.message;
 
-    // ── Handle tool call ──────────────────────────────────────────────────
+    // ── Handle tool call (e.g. report_lost_item) ──────────────────────────
     if (assistantMsg?.tool_calls?.length > 0) {
       const toolCall = assistantMsg.tool_calls[0];
       const toolName = toolCall.function.name;
 
       let toolArgs = {};
-      try { toolArgs = JSON.parse(toolCall.function.arguments); }
-      catch { toolArgs = { description: message }; }
+      try {
+        toolArgs = JSON.parse(toolCall.function.arguments);
+      } catch {
+        toolArgs = { description: message };
+      }
 
       let toolResultData = { error: 'Unknown tool' };
 
       if (toolName === 'report_lost_item') {
-        // Call the shared handler directly — no HTTP round-trip needed
+        // Execute server-side — never exposes internal logic to client
         toolResultData = handleLostFoundReport({ ...toolArgs, reportedAt: new Date().toISOString() });
       }
 
       const toolResult = { success: true, data: toolResultData };
 
-      // ── Second call — model sees tool result and writes final reply ──────
+      // ── Second OpenRouter call — model receives tool result ────────────
       const messagesWithTool = [
         ...messages,
         { role: 'assistant', content: assistantMsg.content || '', tool_calls: assistantMsg.tool_calls },
@@ -129,7 +185,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── No tool call — plain response ─────────────────────────────────────
+    // ── Plain response (no tool call) ─────────────────────────────────────
     return res.json({
       success: true,
       data: {

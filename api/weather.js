@@ -1,12 +1,55 @@
+// @ts-check
+/**
+ * @fileoverview GET /api/weather — Real-time stadium weather via Open-Meteo.
+ *
+ * Fetches current weather conditions for a given GPS coordinate.
+ * Falls back to simulated MetLife Stadium data if the external API fails —
+ * ensuring the UI never breaks in degraded network conditions.
+ *
+ * No API key required — uses the free Open-Meteo public API.
+ *
+ * @module api/weather
+ */
+
 import { setCors } from './_lib/helpers.js';
 
+/** MetLife Stadium fallback latitude */
+const DEFAULT_LAT = 40.8135;
+
+/** MetLife Stadium fallback longitude */
+const DEFAULT_LON = -74.0745;
+
+/**
+ * @typedef {Object} WeatherData
+ * @property {number} tempF        - Temperature in Fahrenheit.
+ * @property {number} tempC        - Temperature in Celsius.
+ * @property {number} humidity     - Relative humidity percentage (0-100).
+ * @property {number} rain         - Precipitation probability percentage (0-100).
+ * @property {number} wind         - Wind speed in mph.
+ * @property {number} [weatherCode]- WMO weather interpretation code.
+ * @property {string} source       - Data source identifier ('open-meteo' | 'simulated').
+ * @property {string} updatedAt    - ISO 8601 timestamp of data retrieval.
+ */
+
+/**
+ * Weather handler. Accepts optional `lat` and `lon` query params.
+ * If omitted, defaults to MetLife Stadium coordinates.
+ *
+ * @param {import('@vercel/node').VercelRequest}  req - Request with optional query: { lat, lon }.
+ * @param {import('@vercel/node').VercelResponse} res - Response with { success: boolean, data: WeatherData }.
+ * @returns {Promise<void>}
+ *
+ * @example
+ * // GET /api/weather?lat=40.8135&lon=-74.0745
+ * // → { success: true, data: { tempF: 72, tempC: 22, ... } }
+ */
 export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { lat, lon } = req.query;
-  const latitude  = parseFloat(lat)  || 40.8135;  // MetLife Stadium fallback
-  const longitude = parseFloat(lon)  || -74.0745;
+  const latitude  = parseFloat(lat)  || DEFAULT_LAT;
+  const longitude = parseFloat(lon)  || DEFAULT_LON;
 
   try {
     const url = [
@@ -38,6 +81,8 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('[/api/weather] Error:', err.message, '— using mock fallback');
+
+    // Graceful degradation — return simulated data rather than a 500 error
     return res.json({
       success: true,
       data: {
