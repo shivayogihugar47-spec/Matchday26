@@ -35,7 +35,8 @@ export const useVoiceConcierge = () => {
         vapiRef.current.stop().catch(() => {});
         vapiRef.current.removeAllListeners();
       } catch (e) {
-        console.log('Cleanup error (expected):', e);
+        // Suppress cleanup errors — Vapi may already be disconnected
+        void e;
       }
     }
     setCallActive(false);

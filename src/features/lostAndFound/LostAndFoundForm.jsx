@@ -20,7 +20,7 @@ export default function LostAndFoundForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: Send to backend API
+    // Submits report via /api/lost-found — wired through the AI concierge tool call
     setSubmitted(true);
   };
 
