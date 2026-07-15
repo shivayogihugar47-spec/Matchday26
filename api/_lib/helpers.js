@@ -58,7 +58,7 @@ export function buildKbSummary() {
     `Payment: ${kb.amenities?.paymentPolicy || 'Cashless only.'}`,
     `Transport: ${kb.transportation?.rail?.njtransit?.summary || 'NJ Transit from Penn Station and Secaucus Junction.'}`,
     `Accessibility: Elevators at ${kb.gates?.elevatorsAt?.join(', ')}.`,
-    `Final Match: FIFA World Cup 2026 Final — Spain vs Argentina (winner of SF2 TBD) on July 19, 2026 at 3 PM ET at MetLife Stadium.`,
+    `Final Match: FIFA World Cup 2026 Final — Spain vs SF2 winner on July 19, 2026 at 3 PM ET at MetLife Stadium. SF1 result: Spain beat France 2-0.`,
   ].join(' ');
 }
 

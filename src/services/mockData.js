@@ -24,12 +24,12 @@ export const mockWeather = {
 // Result: Spain won 2-0 (Oyarzabal 45+2' pen, Porro 67')
 // Spain advances to the FIFA World Cup 2026 Final at MetLife Stadium, July 19
 
-// SF2 result — Argentina beat England (confirm via live search; updating to reflect latest)
-// Final: Spain vs Argentina — July 19, 2026 at MetLife Stadium, East Rutherford NJ
+// SF2 result — England vs Argentina (July 15, Atlanta) — result pending
+// Once confirmed, update awayTeam, semifinalResults[1].score and semifinalResults[1].scorers
 
 export const mockMatch = {
   homeTeam: 'Spain',
-  awayTeam: 'Argentina',
+  awayTeam: 'TBD',
   score: { home: 0, away: 0 },
   minute: 0,
   status: 'SCHEDULED',

@@ -263,7 +263,7 @@ export default function MatchCard() {
               </span>
             </div>
             <p className="font-display text-lg font-semibold uppercase text-white">{awayTeamDisplay}</p>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-sky-200/80">World Champions · 2022</p>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-sky-200/80">SF2 Winner · July 15</p>
             {!hideVoteControls && (
               <div className="mt-2 flex flex-col items-center gap-2">
                 <button
