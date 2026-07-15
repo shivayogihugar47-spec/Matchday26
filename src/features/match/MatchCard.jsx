@@ -137,9 +137,9 @@ export default function MatchCard() {
               <Trophy className="h-6 w-6 text-white" />
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.38em] text-amber-300">FIFA World Cup 2026</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.38em] text-amber-300">FIFA World Cup 2026 Final</p>
               <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
-                Final Match Day
+                Spain vs Argentina
               </h3>
             </div>
           </div>
@@ -162,14 +162,19 @@ export default function MatchCard() {
           <Countdown isPreMatch={isPreMatch} />
         </div>
 
-        {/* Headline: Pick your favorite to reach the final! */}
+        {/* Headline */}
         <div className="mb-6 text-center">
           <h2 className="font-display text-2xl font-bold bg-gradient-to-r from-amber-300 via-yellow-200 to-sky-300 bg-clip-text text-transparent sm:text-3xl">
-            Before the Final: Pick Your Favorite Who Will Win and Reach the Final
+            🏆 FIFA World Cup 2026 Final
           </h2>
-          <p className="mt-2 text-sm text-slate-300">
-            Cast your vote for the team you think will make it all the way!
+          <p className="mt-1 text-sm text-slate-300">
+            Sunday, July 19 · 3:00 PM ET · MetLife Stadium, New Jersey
           </p>
+          {/* Semifinal results */}
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] text-slate-500">
+            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">SF1: <span className="text-white font-semibold">Spain 2–0 France</span></span>
+            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">SF2: <span className="text-white font-semibold">TBD</span></span>
+          </div>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
@@ -188,7 +193,7 @@ export default function MatchCard() {
               </span>
             </div>
             <p className="font-display text-lg font-semibold uppercase text-white">{homeTeamDisplay}</p>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200/80">Official side</p>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200/80">World Champions · 2010</p>
             {!hideVoteControls && (
               <div className="mt-2 flex flex-col items-center gap-2">
                 <button
@@ -201,10 +206,10 @@ export default function MatchCard() {
                   }`}
                 >
                   <ThumbsUp className="h-3.5 w-3.5" />
-                  <span>{userVote === 'home' ? 'Voted' : 'Fan Pick'}</span>
+                  <span>{userVote === 'home' ? 'Voted ✓' : 'Fan Pick'}</span>
                 </button>
                 <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-slate-400">
-                  {userVote ? 'Your pick is locked in.' : 'Choose one team for this session.'}
+                  {userVote ? 'Your pick is locked in.' : 'Who lifts the trophy?'}
                 </p>
               </div>
             )}
@@ -258,7 +263,7 @@ export default function MatchCard() {
               </span>
             </div>
             <p className="font-display text-lg font-semibold uppercase text-white">{awayTeamDisplay}</p>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-sky-200/80">Official side</p>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-sky-200/80">World Champions · 2022</p>
             {!hideVoteControls && (
               <div className="mt-2 flex flex-col items-center gap-2">
                 <button
@@ -271,10 +276,10 @@ export default function MatchCard() {
                   }`}
                 >
                   <ThumbsUp className="h-3.5 w-3.5" />
-                  <span>{userVote === 'away' ? 'Voted' : 'Fan Pick'}</span>
+                  <span>{userVote === 'away' ? 'Voted ✓' : 'Fan Pick'}</span>
                 </button>
                 <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-slate-400">
-                  {userVote ? 'Your pick is locked in.' : 'Choose one team for this session.'}
+                  {userVote ? 'Your pick is locked in.' : 'Who lifts the trophy?'}
                 </p>
               </div>
             )}

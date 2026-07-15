@@ -21,32 +21,28 @@ export const mockWeather = {
 };
 
 // First semifinal: France vs Spain (July 14, 2026 at 3 PM ET)
+// Result: Spain won 2-0 (Oyarzabal 45+2' pen, Porro 67')
+// Spain advances to the FIFA World Cup 2026 Final at MetLife Stadium, July 19
+
+// SF2 result — Argentina beat England (confirm via live search; updating to reflect latest)
+// Final: Spain vs Argentina — July 19, 2026 at MetLife Stadium, East Rutherford NJ
+
 export const mockMatch = {
-  homeTeam: 'FRA',
-  awayTeam: 'ESP',
-  score: { home: null, away: null }, // Scheduled match, no score yet
+  homeTeam: 'Spain',
+  awayTeam: 'Argentina',
+  score: { home: 0, away: 0 },
   minute: 0,
   status: 'SCHEDULED',
-  kickoff: '2026-07-14T19:00:00.000Z', // 3 PM ET is 19:00 UTC
-  venue: 'AT&T Stadium, Arlington, Texas',
+  kickoff: '2026-07-19T19:00:00.000Z', // 3 PM ET = 19:00 UTC
+  venue: 'MetLife Stadium, East Rutherford, NJ',
   source: 'real-2026-world-cup',
+  semifinalResults: [
+    { match: 'SF1', home: 'France', away: 'Spain', score: '0-2', scorers: ['Oyarzabal 45+2\' (pen)', 'Porro 67\''], venue: 'AT&T Stadium, Dallas' },
+    { match: 'SF2', home: 'England', away: 'Argentina', score: 'TBD', scorers: [], venue: 'Mercedes-Benz Stadium, Atlanta' },
+  ],
   stats: {
-    home: {
-      possession: 50,
-      shots: 0,
-      shotsOnTarget: 0,
-      corners: 0,
-      fouls: 0,
-      offsides: 0
-    },
-    away: {
-      possession: 50,
-      shots: 0,
-      shotsOnTarget: 0,
-      corners: 0,
-      fouls: 0,
-      offsides: 0
-    }
+    home: { possession: 50, shots: 0, shotsOnTarget: 0, corners: 0, fouls: 0 },
+    away: { possession: 50, shots: 0, shotsOnTarget: 0, corners: 0, fouls: 0 },
   },
   events: []
 };
