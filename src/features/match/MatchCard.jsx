@@ -139,7 +139,7 @@ export default function MatchCard() {
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.38em] text-amber-300">FIFA World Cup 2026 Final</p>
               <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
-                Spain vs Argentina
+                {homeTeamDisplay} vs {awayTeamDisplay}
               </h3>
             </div>
           </div>
