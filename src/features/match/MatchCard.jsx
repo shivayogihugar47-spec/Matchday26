@@ -131,9 +131,10 @@ export default function MatchCard() {
   return (
     <TicketCard className="relative overflow-hidden">
       <div className="relative z-10">
-        <div className="mb-5 overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/60 px-4 py-4 shadow-[0_10px_35px_rgba(2,6,23,0.25)] sm:flex-row sm:items-center sm:justify-center">
+        {/* Match header badge */}
+        <div className="mb-5 overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/60 px-4 py-4 shadow-[0_10px_35px_rgba(2,6,23,0.25)]">
           <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-center sm:justify-center sm:text-left">
-            <div className="flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 shadow-[0_10px_25px_rgba(251,191,36,0.2)]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-gradient-to-br from-amber-400 via-orange-500 to-red-500">
               <Trophy className="h-6 w-6 text-white" />
             </div>
             <div>
@@ -143,9 +144,9 @@ export default function MatchCard() {
               </h3>
             </div>
           </div>
-          <div className={`mx-auto mt-3 inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] sm:mt-0 ${isMatchActive ? 'border-emerald-400/25 bg-emerald-500/10 text-emerald-300' : isMatchComplete ? 'border-slate-400/20 bg-slate-800/50 text-slate-300' : 'border-amber-400/25 bg-amber-500/10 text-amber-200'}`}>
-            <span className={`h-2.5 w-2.5 rounded-full ${isMatchActive ? 'animate-pulse bg-emerald-400' : isMatchComplete ? 'bg-slate-400' : 'bg-amber-400'}`} />
-            {isMatchActive ? 'Match live' : isMatchComplete ? 'Match complete' : 'Kickoff pending'}
+          <div className={`mx-auto mt-3 inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.3em] sm:mt-0 ${isMatchActive ? 'border-emerald-400/25 bg-emerald-500/10 text-emerald-300' : isMatchComplete ? 'border-amber-400/25 bg-amber-500/10 text-amber-200' : 'border-amber-400/25 bg-amber-500/10 text-amber-200'}`}>
+            <span className={`h-2.5 w-2.5 rounded-full ${isMatchActive ? 'animate-pulse bg-emerald-400' : isMatchComplete ? 'bg-amber-400' : 'bg-amber-400'}`} />
+            {isMatchActive ? 'Match live' : isMatchComplete ? '🏆 Spain Champions 2026' : 'Kickoff pending'}
           </div>
         </div>
 
@@ -165,15 +166,24 @@ export default function MatchCard() {
         {/* Headline */}
         <div className="mb-6 text-center">
           <h2 className="font-display text-2xl font-bold bg-gradient-to-r from-amber-300 via-yellow-200 to-sky-300 bg-clip-text text-transparent sm:text-3xl">
-            🏆 FIFA World Cup 2026 Final
+            🏆 Spain are World Champions 2026!
           </h2>
           <p className="mt-1 text-sm text-slate-300">
-            Sunday, July 19 · 3:00 PM ET · MetLife Stadium, New Jersey
+            Spain 1–0 Argentina (AET) · MetLife Stadium · July 19, 2026
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Ferran Torres 108' (Nico Williams) · Enzo Fernández red card 90+3'
           </p>
           {/* Semifinal results */}
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] text-slate-500">
             <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">SF1: <span className="text-white font-semibold">Spain 2–0 France</span></span>
-            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">SF2: <span className="text-white font-semibold">TBD</span></span>
+            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">SF2: <span className="text-white font-semibold">Argentina 1–0 England</span></span>
+          </div>
+          {/* Match stats */}
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-[11px]">
+            <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-2.5 py-1 text-amber-300">Spain 20 shots</span>
+            <span className="rounded-full border border-slate-400/20 bg-slate-500/10 px-2.5 py-1 text-slate-400">Argentina 0 on target</span>
+            <span className="rounded-full border border-sky-400/20 bg-sky-500/10 px-2.5 py-1 text-sky-300">62% possession</span>
           </div>
         </div>
 
@@ -193,7 +203,7 @@ export default function MatchCard() {
               </span>
             </div>
             <p className="font-display text-lg font-semibold uppercase text-white">{homeTeamDisplay}</p>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200/80">World Champions · 2010</p>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200/80">🏆 World Champions · 2010 & 2026</p>
             {!hideVoteControls && (
               <div className="mt-2 flex flex-col items-center gap-2">
                 <button
@@ -263,7 +273,7 @@ export default function MatchCard() {
               </span>
             </div>
             <p className="font-display text-lg font-semibold uppercase text-white">{awayTeamDisplay}</p>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-sky-200/80">SF2 Winner · July 15</p>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-sky-200/80">World Champions · 2022</p>
             {!hideVoteControls && (
               <div className="mt-2 flex flex-col items-center gap-2">
                 <button

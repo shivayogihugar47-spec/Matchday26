@@ -57,7 +57,7 @@ import { create } from 'zustand';
  */
 export const useMatchDayStore = create((set) => ({
   /** @type {MatchPhase} */
-  phase: 'PRE_MATCH',
+  phase: 'POST_MATCH',
 
   /** @type {SupportedLanguage} */
   language: 'en',

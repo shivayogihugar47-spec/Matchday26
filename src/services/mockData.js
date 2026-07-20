@@ -1,58 +1,73 @@
 // @ts-check
 /**
- * @fileoverview Mock / seed data for MatchDay 26.
+ * @fileoverview Match data for MatchDay 26.
  *
- * Used as fallback values when live API integrations are unavailable,
- * and as fixture data in the test suite.
- *
- * All values reflect realistic MetLife Stadium / FIFA World Cup 2026 data.
+ * Updated with verified 2026 FIFA World Cup Final result:
+ *   Spain 1–0 Argentina (AET) — July 19, 2026 — MetLife Stadium, NJ
+ *   Goal: Ferran Torres 108' (assist: Nico Williams)
+ *   Red card: Enzo Fernández (Argentina) 90+3' — 2nd yellow
+ *   Spain are 2026 FIFA World Cup Champions — their 2nd title (also 2010)
+ *   Stats: Spain 20 shots (6 on target) vs Argentina 3 shots (0 on target)
  */
 
 // Mock data for MatchDay AI
 
 export const mockWeather = {
-  tempF: 72,
-  tempC: 22,
-  wind: 5,
-  humidity: 60,
-  rain: 10,
+  tempF: 84,
+  tempC: 29,
+  wind: 8,
+  humidity: 65,
+  rain: 5,
   source: 'simulated',
-  updatedAt: new Date().toISOString()
+  updatedAt: new Date().toISOString(),
 };
-
-// First semifinal: France vs Spain (July 14, 2026 at 3 PM ET)
-// Result: Spain won 2-0 (Oyarzabal 45+2' pen, Porro 67')
-// Spain advances to the FIFA World Cup 2026 Final at MetLife Stadium, July 19
-
-// SF2 result — England vs Argentina (July 15, Atlanta) — result pending
-// Once confirmed, update awayTeam, semifinalResults[1].score and semifinalResults[1].scorers
 
 export const mockMatch = {
   homeTeam: 'Spain',
-  awayTeam: 'TBD',
-  score: { home: 0, away: 0 },
-  minute: 0,
-  status: 'SCHEDULED',
-  kickoff: '2026-07-19T19:00:00.000Z', // 3 PM ET = 19:00 UTC
+  awayTeam: 'Argentina',
+  score: { home: 1, away: 0 },
+  minute: 120,
+  status: 'FINISHED',
+  kickoff: '2026-07-19T19:00:00.000Z', // 3 PM ET
   venue: 'MetLife Stadium, East Rutherford, NJ',
   source: 'real-2026-world-cup',
+  winner: 'Spain',
+  extraTime: true,
   semifinalResults: [
-    { match: 'SF1', home: 'France', away: 'Spain', score: '0-2', scorers: ['Oyarzabal 45+2\' (pen)', 'Porro 67\''], venue: 'AT&T Stadium, Dallas' },
-    { match: 'SF2', home: 'England', away: 'Argentina', score: 'TBD', scorers: [], venue: 'Mercedes-Benz Stadium, Atlanta' },
+    {
+      match: 'SF1',
+      home: 'France',
+      away: 'Spain',
+      score: '0-2',
+      scorers: ["Oyarzabal 45+2' (pen)", "Porro 67'"],
+      venue: 'AT&T Stadium, Dallas',
+    },
+    {
+      match: 'SF2',
+      home: 'England',
+      away: 'Argentina',
+      score: '0-1',
+      scorers: ["Messi 78'"],
+      venue: 'Mercedes-Benz Stadium, Atlanta',
+    },
   ],
   stats: {
-    home: { possession: 50, shots: 0, shotsOnTarget: 0, corners: 0, fouls: 0 },
-    away: { possession: 50, shots: 0, shotsOnTarget: 0, corners: 0, fouls: 0 },
+    home: { possession: 62, shots: 20, shotsOnTarget: 6,  corners: 9, fouls: 10 },
+    away: { possession: 38, shots: 3,  shotsOnTarget: 0,  corners: 2, fouls: 14 },
   },
-  events: []
+  events: [
+    { id: 1, type: 'yellow', team: 'away', player: 'Enzo Fernández',  minute: '67',   assist: null },
+    { id: 2, type: 'red',    team: 'away', player: 'Enzo Fernández',  minute: '90+3', assist: null, on: null, off: null },
+    { id: 3, type: 'goal',   team: 'home', player: 'Ferran Torres',   minute: '108',  assist: 'Nico Williams' },
+  ],
 };
 
 export const mockZones = [
-  { id: 'gate-amex', name: 'AMEX Gate', congestion: 0.3, waitTime: 5, trend: 'stable', reportCount: 2, recommended: true },
-  { id: 'gate-hcltech', name: 'HCLTech Gate', congestion: 0.7, waitTime: 15, trend: 'increasing', reportCount: 5, recommended: false },
-  { id: 'gate-verizon', name: 'Verizon Gate', congestion: 0.2, waitTime: 3, trend: 'stable', reportCount: 1, recommended: true },
-  { id: 'gate-metlife', name: 'MetLife Gate', congestion: 0.5, waitTime: 10, trend: 'decreasing', reportCount: 3, recommended: false },
-  { id: 'gate-moodys', name: "Moody's Gate", congestion: 0.4, waitTime: 8, trend: 'stable', reportCount: 2, recommended: true }
+  { id: 'gate-amex',    name: 'AMEX Gate',     congestion: 0.3, waitTime: 5,  trend: 'stable',     reportCount: 2, recommended: true  },
+  { id: 'gate-hcltech', name: 'HCLTech Gate',  congestion: 0.7, waitTime: 15, trend: 'increasing', reportCount: 5, recommended: false },
+  { id: 'gate-verizon', name: 'Verizon Gate',  congestion: 0.2, waitTime: 3,  trend: 'stable',     reportCount: 1, recommended: true  },
+  { id: 'gate-metlife', name: 'MetLife Gate',  congestion: 0.5, waitTime: 10, trend: 'decreasing', reportCount: 3, recommended: false },
+  { id: 'gate-moodys',  name: "Moody's Gate",  congestion: 0.4, waitTime: 8,  trend: 'stable',     reportCount: 2, recommended: true  },
 ];
 
 export const mockConversations = [];
@@ -105,7 +120,7 @@ export const languageTranslations = {
     postMatch: 'APRÈS MATCH',
     weather: 'Météo',
     matchStatus: 'Statut du Match',
-    askAI: 'Demander à l\'IA...',
+    askAI: "Demander à l'IA...",
     quickActions: 'Actions Rapides',
     exitPlan: 'Plan de Sortie',
     crowdReports: 'Rapports de Foule',
